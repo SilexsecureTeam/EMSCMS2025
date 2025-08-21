@@ -1,0 +1,85 @@
+/* Center the spinner on the screen */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background-color: #0f0e0e; /* Dark background matching your theme */
+}
+
+/* Spinner wrapper */
+.spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+/* Logo in the center */
+.logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px; /* Increased size to show full logo */
+  height: 60px;
+  background-color: #fff; /* White background for logo */
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite; /* Added pulse animation */
+}
+
+/* Logo image */
+.logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block; /* Ensure image is fully visible */
+}
+
+/* Text-based logo (if no image) */
+.logo-text {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #38cb89; /* Green accent */
+}
+
+/* Rotating spinner border */
+.spinner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 4px solid transparent;
+  border-top-color: #38cb89; /* Green accent */
+  border-right-color: #38cb89;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Rotate animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulse animation for logo scaling */
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2); /* Increase size */
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1); /* Decrease back to original */
+  }
+}
