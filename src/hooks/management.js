@@ -60,25 +60,25 @@ const PageManagement = () => {
     }
   }
 
-const UpdateProgramme = async (slug, formData) => {
-  try {
-    setLoading(true);
-    const res = await axiosAuth.post(
-      `/programs/${slug}`, 
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
-    router("/dashboard/programme");
-    return Promise.resolve("Program updated successfully");
-  } catch (error) {
+  const UpdateProgramme = async (slug, formData) => {
+    try {
+      setLoading(true);
+      const res = await axiosAuth.post(
+        `/programs/${slug}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      router("/dashboard/programme");
+      return Promise.resolve("Program updated successfully");
+    } catch (error) {
 
-    const resError = error.response?.data;
-    const errorMessage = resError?.message || resError?.data;
-    return Promise.reject(errorMessage || "Error updating Program");
-  } finally {
-    setLoading(false);
-  }
-};
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error updating Program");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
 
@@ -280,6 +280,21 @@ const UpdateProgramme = async (slug, formData) => {
     }
   };
 
+  const deleteGallery = async (id) => {
+    try {
+      setLoading(true);
+      await axiosAuth.delete(`/gallery/${id}`);
+      return Promise.resolve("Gallery deleted successfully");
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error deleting Gallery");
+    } finally {
+      setLoading(false);
+    }
+  }
+
 
   const updateGallery = async (id, formData) => {
     try {
@@ -355,34 +370,34 @@ const UpdateProgramme = async (slug, formData) => {
   };
 
   const downloadEnrollPdf = async (id) => {
-  try {
-    const res = await axiosAuth.get(`/enrol-now/download/${id}`, {
-      responseType: 'blob', 
-    });
+    try {
+      const res = await axiosAuth.get(`/enrol-now/download/${id}`, {
+        responseType: 'blob',
+      });
 
-    const fileURL = window.URL.createObjectURL(new Blob([res.data]));
+      const fileURL = window.URL.createObjectURL(new Blob([res.data]));
 
-    const contentDisposition = res.headers['content-disposition'];
-    let fileName = 'enrol-now.pdf';
-    if (contentDisposition && contentDisposition.includes('filename=')) {
-      fileName = contentDisposition.split('filename=')[1].replace(/"/g, '');
+      const contentDisposition = res.headers['content-disposition'];
+      let fileName = 'enrol-now.pdf';
+      if (contentDisposition && contentDisposition.includes('filename=')) {
+        fileName = contentDisposition.split('filename=')[1].replace(/"/g, '');
+      }
+
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      return Promise.resolve("PDF downloaded successfully");
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error downloading PDF");
     }
-
-    const link = document.createElement('a');
-    link.href = fileURL;
-    link.setAttribute('download', fileName);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    return Promise.resolve("PDF downloaded successfully");
-  } catch (error) {
-    console.error(error);
-    const resError = error.response?.data;
-    const errorMessage = resError?.message || resError?.data;
-    return Promise.reject(errorMessage || "Error downloading PDF");
-  }
-};
+  };
 
 
   const getContacts = async () => {
@@ -415,22 +430,22 @@ const UpdateProgramme = async (slug, formData) => {
     }
   }
 
-   const getTopStories = async () => {
+  const getTopStories = async () => {
     return await axiosAuth.get("/blogs?top_stories=1");
   };
 
-const createPage = async (data) => {
-  try {
-    const res = await axiosAuth.post("/page/update", data,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    console.log('Page created:', res.data);
-    return Promise.resolve("Page created successfully")
-  } catch (error) {
+  const createPage = async (data) => {
+    try {
+      const res = await axiosAuth.post("/page/update", data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log('Page created:', res.data);
+      return Promise.resolve("Page created successfully")
+    } catch (error) {
       console.error(error);
       const resError = error.response?.data;
       const errorMessage = resError?.message || resError?.data;
@@ -440,21 +455,80 @@ const createPage = async (data) => {
     }
   }
 
-const getPages = async (parentPage) => {
-  try {
-    setLoading(true);
-    const res = await axiosAuth.get(`/page/${parentPage}`);
-    return res.data;
-  } catch (error) {
-    console.error(error);
-    const resError = error.response?.data;
-    const errorMessage = resError?.message || resError?.data;
-    return Promise.reject(errorMessage || "Error fetching Pages");
-  } finally {
-    setLoading(false);
-  }
-};
+  const getPages = async (parentPage) => {
+    try {
+      setLoading(true);
+      const res = await axiosAuth.get(`/page/${parentPage}`);
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Pages");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const getAllHires = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosAuth.get(`/staff-hires`);
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Pages");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const getHireById = async (id) => {
+    try {
+      setLoading(true);
+      const res = await axiosAuth.get(`/staff-hires/${id}`);
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Hire");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const createStaff = async (data) => {
+    try {
+      setLoading(true)
+      const res = await axiosAuth.post("/staff-hires", data);
+      return Promise.resolve("Staff created successfully")
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Hire");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const deleteStaff = async (id) =>{
+     try {
+      setLoading(true);
+      await axiosAuth.delete(`/staff-hires/${id}`);
+      return Promise.resolve("Programme deleted successfully");
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error deleting Program");
+    } finally {
+      setLoading(false);
+    }
+  }
 
 
 
@@ -476,13 +550,18 @@ const getPages = async (parentPage) => {
     getAllGalleries,
     updateGallery,
     getAllEnrollment,
-    createEnrollment,  
+    createEnrollment,
     createContact,
     getContacts,
     downloadEnrollPdf,
     getTopStories,
     createPage,
     getPages,
+    deleteGallery,
+    getAllHires,
+    getHireById,
+    createStaff,
+    deleteStaff,
   }
 
 }

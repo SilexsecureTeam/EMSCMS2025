@@ -42,10 +42,10 @@ const Misson2 = memo(({ data }) => {
         <div className="w-full flex justify-center lg:w-1/2 ">
           <div className=" ">
             <h2 className="text-xl md:text-[35px] max-w-[450px] poppins md:leading-11 font-semibold text-[#333333] mb-4">
-              {title || "Default Title"}
+              {title }
             </h2>
             <p className="mb-7 text-[17px] font-light poppins max-w-[418px] text-[#333333]">
-              {content || "Default content."}
+              {content }
             </p>
             <div className="flex gap-x-2 items-center justify-center md:justify-start">
               <NavLink to="/programs">

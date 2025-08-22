@@ -19,6 +19,7 @@ import Gallery from './Gallery/Gallery';
 import EnrolNow from './EnrolNow/EnrolNow';
 import ContactPage from './Contact/Contact';
 import CreatePage from './CreatePage';
+import StaffManagement from './Staff';
 const MainContent = () => {
   return (
     <main className="flex-1 bg-gray-100 overflow-auto">
@@ -41,6 +42,7 @@ const MainContent = () => {
         <Route path="gallery" element={<Gallery />} />
         <Route path="contact" element={<ContactPage/>} />
         <Route path="enrol-now" element={<EnrolNow />} />
+        <Route path="staff" element={<StaffManagement />} />
         <Route path="*" element={<div>Error: Page Not Found</div>} />
       </Routes>
     </main>

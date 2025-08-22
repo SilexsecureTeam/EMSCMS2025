@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 // Accept the 'data' prop from the parent component
 const Program2 = memo(({ data }) => {
-  // Destructure the props with a fallback to avoid errors if data is null
   const { title, content, image } = data || {};
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
@@ -16,7 +15,7 @@ const Program2 = memo(({ data }) => {
       const img = new Image();
       img.src = image;
       img.onload = () => setImageLoaded(true);
-      img.onerror = () => setImageLoaded(false); // Handle image loading errors
+      img.onerror = () => setImageLoaded(false); 
     } else {
       setImageLoaded(false);
       setImageSrc(null);
@@ -28,11 +27,11 @@ const Program2 = memo(({ data }) => {
       <div className="bg-[#c5ac8e] p-15 md:px-9 px-4 rounded-sm">
         <div className="flex flex-col text-center gap-2 md:text-start md:flex-row md:justify-between justify-center item-center">
           <h1 className="font-bold md:max-w-[600px] w-full text-2xl md:text-[35px] capitalize">
-            {title || "We have the best Etiquette training programs"}
+            {title }
           </h1>
           <div className="md:max-w-[389px] w-full flex flex-col justify-center">
             <p className="text-[17px] mb-3 font-light poppins">
-              {content || "Start your journey or grow your career. Skills for all levels and every role."}
+              {content }
             </p>
             <div className="py-3 px-1 flex bg-white rounded-sm max-w-[330px] gap-x-5 items-center h-[50px]">
               <button className="bg-[#19392c] font-medium text-white rounded-[5px] py-2 px-5">

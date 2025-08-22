@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FilePlus, X } from 'lucide-react';
+import { DeleteIcon, FilePlus, Pen, X } from 'lucide-react'; 
 import PageManagement from '../../../hooks/management';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -9,11 +9,15 @@ import { toast } from 'react-hot-toast';
 const Gallery = () => {
   const [showAddGalleryModal, setShowAddGalleryModal] = useState(false);
   const [currentImages, setCurrentImages] = useState([null, null, null]);
-  const { getAllGalleries, createGallery, updateGallery } = PageManagement();
+  const { getAllGalleries, createGallery, updateGallery, deleteGallery } = PageManagement();
   const [galleries, setGalleries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingGalleryId, setEditingGalleryId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [galleryToDelete, setGalleryToDelete] = useState(null);
+
   const IMG_URL = import.meta.env.VITE_IMAGE_URL;
+
   const schema = yup.object().shape({
     gallery_header: yup.string().required('Gallery header is required'),
     sub_header: yup.string().required('Sub header is required'),
@@ -54,7 +58,6 @@ const Gallery = () => {
     setLoading(true);
     try {
       const data = await getAllGalleries();
-      console.log('Fetched galleries:', data);
       const galleryData = Array.isArray(data.data) ? data.data : data.data ? [data.data] : [];
       setGalleries(galleryData);
     } catch (error) {
@@ -72,9 +75,9 @@ const Gallery = () => {
       setValue('sub_header', gallery.sub_header || '');
       setValue('title', gallery.title || '');
       setCurrentImages([
-        gallery.image1 || null,
-        gallery.image2 || null,
-        gallery.image3 || null,
+        gallery.image1 ? `${IMG_URL}${gallery.image1}` : null,
+        gallery.image2 ? `${IMG_URL}${gallery.image2}` : null,
+        gallery.image3 ? `${IMG_URL}${gallery.image3}` : null,
       ]);
     } else {
       setEditingGalleryId(null);
@@ -84,7 +87,6 @@ const Gallery = () => {
     setShowAddGalleryModal(true);
   };
 
-  /** CREATE (FormData) **/
   const handleCreateGallery = async (data) => {
     const formData = new FormData();
     formData.append('gallery_header', data.gallery_header);
@@ -104,7 +106,6 @@ const Gallery = () => {
     );
   };
 
-
   const handleUpdateGallery = async (id, data) => {
     const formData = new FormData();
     formData.append('gallery_header', data.gallery_header);
@@ -113,8 +114,8 @@ const Gallery = () => {
     if (data.image1 && data.image1.length > 0) formData.append('image1', data.image1[0]);
     if (data.image2 && data.image2.length > 0) formData.append('image2', data.image2[0]);
     if (data.image3 && data.image3.length > 0) formData.append('image3', data.image3[0]);
-    formData.append("_method","PATCH");
-    
+    formData.append("_method", "PATCH");
+
     await toast.promise(
       updateGallery(id, formData),
       {
@@ -125,6 +126,28 @@ const Gallery = () => {
     );
   };
 
+  const confirmDelete = (id) => {
+    setGalleryToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteGallery = async () => {
+    try {
+      await toast.promise(
+        deleteGallery(galleryToDelete),
+        {
+          pending: 'Deleting gallery...',
+          success: 'Gallery deleted successfully',
+          error: 'Failed to delete gallery',
+        }
+      );
+      fetchGalleries(); 
+      setShowDeleteModal(false); // Close the modal
+      setGalleryToDelete(null); // Reset the gallery to be deleted
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Deletion failed');
+    }
+  };
 
   const onSave = async (data) => {
     try {
@@ -158,45 +181,60 @@ const Gallery = () => {
           </button>
         </div>
 
+        {/* This div now includes overflow-x-auto for horizontal scrolling */}
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-green-50 rounded overflow-hidden">
+          <table className="min-w-full bg-green-50 rounded table-auto">
             <thead className="bg-[#10172B] text-white font-medium text-sm sm:text-base text-left">
               <tr>
-                <th className="px-2 py-2 sm:px-4">Title</th>
-                <th className="px-2 py-2 sm:px-4">Gallery Header</th>
-                <th className="px-2 py-2 sm:px-4">Sub Header</th>
-                <th className="px-2 py-2 sm:px-4">Images</th>
-                <th className="px-2 py-2 sm:px-4">Actions</th>
+                <th className="px-4 py-2">Title</th>
+                <th className="px-4 py-2">Gallery Header</th>
+                <th className="px-4 py-2">Sub Header</th>
+                {/* Fixed width for the images column */}
+                <th className="px-4 py-2 w-24">Images</th>
+                {/* Separate headers for Edit and Delete actions */}
+                <th className="px-4 py-2 text-center">Edit</th>
+                <th className="px-4 py-2 text-center">Delete</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-8">Loading...</td>
+                  <td colSpan={6} className="text-center py-8">Loading...</td> {/* Updated colspan */}
                 </tr>
               ) : galleries.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-8">No gallery entries found</td>
+                  <td colSpan={6} className="text-center py-8">No gallery entries found</td> {/* Updated colspan */}
                 </tr>
               ) : (
                 galleries.map((gallery) => (
                   <tr key={gallery.id} className="border-b">
-                    <td className="px-2 py-2 sm:px-4">{gallery.title}</td>
-                    <td className="px-2 py-2 sm:px-4">{gallery.gallery_header}</td>
-                    <td className="px-2 py-2 sm:px-4">{gallery.sub_header}</td>
-                    <td className="px-2 py-2 sm:px-4">
-                      <div className="flex space-x-2">
-                        {gallery.image1 && <img src={IMG_URL + gallery.image1} alt="" className="w-10 h-10 object-cover rounded" />}
-                        {gallery.image2 && <img src={IMG_URL + gallery.image2} alt="" className="w-10 h-10 object-cover rounded" />}
-                        {gallery.image3 && <img src={IMG_URL + gallery.image3} alt="" className="w-10 h-10 object-cover rounded" />}
+                    <td className="px-4 py-2">{gallery.title}</td>
+                    <td className="px-4 py-2">{gallery.gallery_header}</td>
+                    <td className="px-4 py-2">{gallery.sub_header}</td>
+                    {/* Fixed width for the images column content */}
+                    <td className="px-4 py-2 w-24">
+                      <div className="flex  space-x-2">
+                        {gallery.image1 && <img src={`${IMG_URL}${gallery.image1}`} alt="" className="w-10 h-10 object-cover rounded" />}
+                        {gallery.image2 && <img src={`${IMG_URL}${gallery.image2}`} alt="" className="w-10 h-10 object-cover rounded" />}
+                        {/* {gallery.image3 && <img src={`${IMG_URL}${gallery.image3}`} alt="" className="w-10 h-10 object-cover rounded" />} */}
                       </div>
                     </td>
-                    <td className="px-2 py-2 sm:px-4">
+                    {/* Dedicated cell for the Edit button */}
+                    <td className="px-4 py-2 text-center"> {/* Added text-center for alignment */}
                       <button
                         onClick={() => handleOpenModal(gallery)}
-                        className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                        className="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded hover:bg-blue-700 mx-auto" // Added mx-auto for horizontal centering
                       >
-                        Edit
+                        <Pen className="w-4 h-4" />
+                      </button>
+                    </td>
+                    {/* Dedicated cell for the Delete button */}
+                    <td className="px-4 py-2 text-center"> {/* Added text-center for alignment */}
+                      <button
+                        onClick={() => confirmDelete(gallery.id)}
+                        className="flex items-center justify-center w-8 h-8 bg-red-600 text-white rounded hover:bg-red-700 mx-auto" // Added mx-auto for horizontal centering
+                      >
+                        <DeleteIcon className="w-4 h-4" />
                       </button>
                     </td>
                   </tr>
@@ -277,6 +315,33 @@ const Gallery = () => {
               >
                 <X className="w-5 h-5" />
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex justify-center items-center z-50 p-4">
+            <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-sm">
+              <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
+              <p className="mb-4">Are you sure you want to delete this gallery entry? This action cannot be undone.</p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setGalleryToDelete(null); 
+                  }}
+                  className="px-4 py-2 border rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteGallery}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         )}

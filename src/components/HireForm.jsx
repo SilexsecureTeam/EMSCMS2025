@@ -1,132 +1,123 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import countries from "../data/countries"; // Adjust path as needed
+import countries from "../data/countries";
+import PageManagement from "../hooks/management";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
 
 const HireForm = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    staffCategory: "",
-    experience: "",
-    address: "",
-    city: "",
-    country: "",
-    zipCode: "",
-    note: "",
+  const { createStaff } = PageManagement();
+
+  const schema = yup.object().shape({
+    first_name: yup.string().required("First Name is required"),
+    last_name: yup.string().required("Last Name is required"),
+    email: yup.string().email("Invalid email format").required("Email is required"),
+    phone: yup.string().required("Phone Number is required").matches(/^\d+$/, "Phone number must contain only digits"),
+    staff_category: yup.string().required("Staff Category is required"),
+    years_of_experience: yup.number()
+      .typeError("Experience must be a number")
+      .required("Years of Experience is required")
+      .min(0, "Experience cannot be negative"),
+    address: yup.string().required("Address is required"),
+    city: yup.string().required("City is required"),
+    country: yup.string().required("Country is required"),
+    zip_code: yup.string().required("Zip Code is required"),
+    interest_reason: yup.string().nullable(),
   });
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      staff_category: "",
+      years_of_experience: "",
+      address: "",
+      city: "",
+      country: "",
+      zip_code: "",
+      interest_reason: "",
+    },
+  });
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true); // Start loading
-
+  const onSubmit = async (data) => {
     try {
-      const res = await fetch("https://ems-backend-qif8.onrender.com/api/hire", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      await toast.promise(
+        createStaff(data),
+        {
+          pending: 'Submitting application...',
+          success: 'Application sent successfully!',
+          error: (err) => err.response?.data?.message || err.message || 'Application not sent',
         },
-        body: JSON.stringify(formData),
-      });
+        {
+          position: "top-right",
+        }
+      );
 
-      const data = await res.json();
-      if (res.ok) {
-        toast.success("Application sent successfully!", {
-          duration: 3000,
-          position: "top-right",
-        });
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          staffCategory: "",
-          experience: "",
-          address: "",
-          city: "",
-          country: "",
-          zipCode: "",
-          note: "",
-        });
-        navigate("/success");
-      } else {
-        toast.error(data.message || "Application not sent", {
-          duration: 3000,
-          position: "top-right",
-        });
-      }
+      reset();
+      navigate("/success");
     } catch (error) {
-      toast.error("Network error. Please try again.", {
-        duration: 3000,
-        position: "top-right",
-      });
+      console.error("Submission error:", error);
     } finally {
-      setIsLoading(false); // End loading
     }
   };
 
   return (
     <div className="lg:px-15 md:px-10 px-5 mb-10">
-      {/* Toaster for react-hot-toast */}
       <Toaster />
       <h2 className="text-2xl font-bold mb-6 text-center">Staff Hire Form</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* First Name */}
           <div>
             <label
-              htmlFor="firstName"
+              htmlFor="first_name"
               className="block text-sm font-medium text-gray-700"
             >
               First Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              required
+              id="first_name"
+              name="first_name"
+              {...register("first_name")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
               placeholder="Enter first name"
             />
+            {errors.first_name && (
+              <p className="mt-1 text-sm text-red-600">{errors.first_name.message}</p>
+            )}
           </div>
 
-          {/* Last Name */}
           <div>
             <label
-              htmlFor="lastName"
+              htmlFor="last_name"
               className="block text-sm font-medium text-gray-700"
             >
               Last Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
+              id="last_name"
+              name="last_name"
+              {...register("last_name")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
               placeholder="Enter last name"
             />
+            {errors.last_name && (
+              <p className="mt-1 text-sm text-red-600">{errors.last_name.message}</p>
+            )}
           </div>
 
-          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -138,15 +129,15 @@ const HireForm = () => {
               type="email"
               id="email"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
+              {...register("email")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
               placeholder="Enter email"
             />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+            )}
           </div>
 
-          {/* Phone */}
           <div>
             <label
               htmlFor="phone"
@@ -158,33 +149,29 @@ const HireForm = () => {
               type="tel"
               id="phone"
               name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
+              {...register("phone")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
               placeholder="Enter phone number"
             />
+            {errors.phone && (
+              <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
+            )}
           </div>
 
-          {/* Staff Category */}
           <div>
             <label
-              htmlFor="staffCategory"
+              htmlFor="staff_category"
               className="block text-sm font-medium text-gray-700"
             >
               Staff Category <span className="text-red-500">*</span>
             </label>
             <select
-              id="staffCategory"
-              name="staffCategory"
-              value={formData.staffCategory}
-              onChange={handleChange}
-              required
+              id="staff_category"
+              name="staff_category"
+              {...register("staff_category")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
             >
-              <option value="" disabled>
-                Select a category
-              </option>
+              <option value="">Select a category</option>
               <option value="housekeeper">Housekeeper</option>
               <option value="houseManager">House Manager</option>
               <option value="nanny">Nanny</option>
@@ -192,30 +179,32 @@ const HireForm = () => {
               <option value="concierge">Concierge</option>
               <option value="steward">Steward</option>
             </select>
+            {errors.staff_category && (
+              <p className="mt-1 text-sm text-red-600">{errors.staff_category.message}</p>
+            )}
           </div>
 
-          {/* Years of Experience */}
           <div>
             <label
-              htmlFor="experience"
+              htmlFor="years_of_experience"
               className="block text-sm font-medium text-gray-700"
             >
               Years of Experience <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
-              id="experience"
-              name="experience"
-              value={formData.experience}
-              onChange={handleChange}
-              required
+              id="years_of_experience"
+              name="years_of_experience"
+              {...register("years_of_experience")}
               min="0"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
               placeholder="Enter years of experience"
             />
+            {errors.years_of_experience && (
+              <p className="mt-1 text-sm text-red-600">{errors.years_of_experience.message}</p>
+            )}
           </div>
 
-          {/* Address */}
           <div>
             <label
               htmlFor="address"
@@ -227,15 +216,15 @@ const HireForm = () => {
               type="text"
               id="address"
               name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
+              {...register("address")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
               placeholder="Enter address"
             />
+            {errors.address && (
+              <p className="mt-1 text-sm text-red-600">{errors.address.message}</p>
+            )}
           </div>
 
-          {/* City */}
           <div>
             <label
               htmlFor="city"
@@ -247,15 +236,15 @@ const HireForm = () => {
               type="text"
               id="city"
               name="city"
-              value={formData.city}
-              onChange={handleChange}
-              required
+              {...register("city")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
               placeholder="Enter city"
             />
+            {errors.city && (
+              <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>
+            )}
           </div>
 
-          {/* Country */}
           <div>
             <label
               htmlFor="country"
@@ -266,74 +255,70 @@ const HireForm = () => {
             <select
               id="country"
               name="country"
-              value={formData.country}
-              onChange={handleChange}
-              required
+              {...register("country")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
             >
-              <option value="" disabled>
-                Select a country
-              </option>
+              <option value="">Select a country</option>
               {countries.map((country) => (
                 <option key={country.code} value={country.name}>
                   {country.name}
                 </option>
               ))}
             </select>
+            {errors.country && (
+              <p className="mt-1 text-sm text-red-600">{errors.country.message}</p>
+            )}
           </div>
 
-          {/* Zip Code */}
           <div>
             <label
-              htmlFor="zipCode"
+              htmlFor="zip_code"
               className="block text-sm font-medium text-gray-700"
             >
               Zip Code <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="zipCode"
-              name="zipCode"
-              value={formData.zipCode}
-              onChange={handleChange}
-              required
+              id="zip_code"
+              name="zip_code"
+              {...register("zip_code")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
               placeholder="Enter zip code"
             />
+            {errors.zip_code && (
+              <p className="mt-1 text-sm text-red-600">{errors.zip_code.message}</p>
+            )}
           </div>
         </div>
 
-        {/* Textarea for Motivation */}
         <div>
           <label
-            htmlFor="note"
+            htmlFor="interest_reason"
             className="block text-sm font-medium text-gray-700"
           >
             Why are you interested in this role?
           </label>
           <textarea
-            id="note"
-            name="note"
-            value={formData.note}
-            onChange={handleChange}
+            id="interest_reason"
+            name="interest_reason"
+            {...register("interest_reason")}
             rows="4"
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
             placeholder="Write a few sentences about your motivation..."
           ></textarea>
         </div>
 
-        {/* Submit Button */}
         <div className="text-center">
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting}
             className={`inline-flex w-full justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white ${
-              isLoading
+              isSubmitting
                 ? "bg-[#19392c]/70 cursor-not-allowed"
                 : "bg-[#19392c] hover:bg-[#19392c]/90"
             } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#19392c]`}
           >
-            {isLoading ? (
+            {isSubmitting ? (
               <>
                 <svg
                   className="animate-spin h-5 w-5 mr-2 text-white"

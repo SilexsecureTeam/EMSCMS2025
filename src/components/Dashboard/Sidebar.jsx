@@ -4,6 +4,7 @@ import logo from '../../assets/Group.svg';
 import { useSidebar } from '../../context/SidebarContext';
 import Authentication from '../../hooks/auth';
 import { toast } from 'react-hot-toast';
+import { SiStaffbase } from 'react-icons/si';
 
 const Sidebar = () => {
   const { isSidebarOpen, setIsSidebarOpen } = useSidebar();
@@ -38,6 +39,7 @@ const Sidebar = () => {
     { icon: <BarChart2 />, path: '/dashboard/gallery', tooltip: 'Gallery' },
     { icon: <MessageSquare />, path: '/dashboard/contact', tooltip: 'Contact' },
     { icon:<NotebookTextIcon />, path: '/dashboard/enrol-now', tooltip: 'Enroll Now' },
+    { icon:<SiStaffbase />, path: '/dashboard/staff', tooltip: 'Staff' },
   ];
 
   return (
