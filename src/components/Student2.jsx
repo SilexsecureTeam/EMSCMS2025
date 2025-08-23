@@ -26,10 +26,10 @@ const Student2 = memo(({ data }) => {
   return (
     <div className="md:p-10 md:py-10 py-4 lg:px-15 md:px-10 px-5 home-2">
       <h1 className="font-bold text-[#333333] mx-auto block md:max-w-[675px] mb-4 w-full text-center text-2xl capitalize lg:text-[35px]">
-        {title || "We help every student to stand out from the rest"}
+        {title}
       </h1>
       <p className="text-[17px] mx-auto block text-center md:max-w-[675px] w-full mb-3 font-light text-[#555]">
-        {content || "Our comprehensive programs and expert guidance empower students to build confidence and self-assurance through hands-on experience and mentorship"}
+        {content || ""}
       </p>
 
       <div className="relative w-full gap-10 mt-10">
@@ -97,7 +97,6 @@ const Student2 = memo(({ data }) => {
       </div>
 
       <div className="flex flex-col md:flex-row justify-center items-center gap-3 mt-10">
-        {/* The links and buttons here are already hardcoded, but you could also pass them as props if needed */}
       </div>
     </div>
   );

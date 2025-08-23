@@ -250,40 +250,26 @@ const DynamicProgramPage = () => {
 
   // Fallback data
   const fallbackData = {
-    title: "House Keeper Training Course",
-    content: "A professional housekeeper is the foundation of a well-managed home. This course prepares participants to uphold international housekeeping standards, tailored to the cultural and practical realities of Nigerian homes, especially in high-net-worth and professional households. Whether you’re entering the profession or enhancing your skills, this course provides everything needed to become a confident, capable, and trusted housekeeper.",
-    description: "Have you ever stepped into a home where: Every surface gleams, every item is in its place; The household runs with quiet, effortless efficiency; Staff are discreet, competent, and culturally aware.",
+    title: "",
+    content: ".",
+    description: "",
     learning_outcomes: [
-      "Execute professional housekeeping routines with efficiency and care",
-      "Maintain household appliances and equipment safely and correctly",
-      "Navigate household dynamics with cultural competence and discretion",
-      "Respond appropriately in emergencies and ensure safety in the home",
+      "",
     ],
-    course_fee: "₦550,000",
-    target_audience: "Individuals currently working as housekeepers, Anyone interested in becoming a professional housekeeper, Domestic staff seeking to work in luxury or high-standard homes",
+    course_fee: "",
+    target_audience: "",
     entry_requirement: [
-      "Basic English proficiency",
-      "Willingness to learn and take initiative",
-      "A keen eye for detail and personal discipline",
+      "",
     ],
+
     curriculum: [
-      "Introduction to Professional Housekeeping",
-      "Laundry, Fabric Care, and Household Organisation",
-      "Household Maintenance and Light Cooking",
-      "Safety, Emergency Preparedness, and Client Relations",
+      "",
     ],
     course_content: [
-      "2-week intensive training",
-      "Comprehensive study materials",
-      "Interactive training sessions",
-      "Final certification upon completion",
+      "",
     ],
     learning_experience: [
-      "Live Demonstrations",
-      "Interactive Role-Playing",
-      "Video Lessons",
-      "Hands-on Appliance Training",
-      "Worksheets and Practical Exercises",
+      "",
     ],
     reviews: [],
   };
@@ -305,7 +291,7 @@ const DynamicProgramPage = () => {
             <Skeleton variant="rectangular" width="100%" height="100%" />
           )}
           <img
-            src={`${programData.image }`}
+            src={`${programData.image}`}
             alt={programData.title || "Program Image"}
             className={`w-full h-full object-cover ${heroLoaded ? "block" : "hidden"}`}
             onLoad={() => setHeroLoaded(true)}
@@ -319,11 +305,10 @@ const DynamicProgramPage = () => {
             {tabs.map((tab) => (
               <li key={tab}>
                 <button
-                  className={`pb-2 lg:px-15 md:px-18 px-3 w-fit inter md:text-2xl text-[19px] font-medium ${
-                    activeTab === tab
-                      ? "border-b-2 border-black bg-white text-[#1D2026]"
-                      : "text-[#4E5566]"
-                  }`}
+                  className={`pb-2 lg:px-15 md:px-18 px-3 w-fit inter md:text-2xl text-[19px] font-medium ${activeTab === tab
+                    ? "border-b-2 border-black bg-white text-[#1D2026]"
+                    : "text-[#4E5566]"
+                    }`}
                   onClick={() => {
                     setActiveTab(tab);
                     const el = document.getElementById(tab);
@@ -344,23 +329,24 @@ const DynamicProgramPage = () => {
               <h1 className="text-2xl text-[#1D2026] font-semibold">
                 {programData.title || fallbackData.title}
               </h1>
-              <p className="text-[#333333] font-normal text-base md:text-xl">
-               {(programData.description || fallbackData.description)
-                  .split(";")
-                  .map((item) => item.trim())
-                  .filter((item) => item)
-                  .map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-              </p>
-              
+              {(programData.content && Array.isArray(programData.content)
+                ? programData.content
+                : []
+              ).map((content, index) => (
+                <ul key={index} className="text-[#333333] font-normal text-base md:text-lg">
+                    <li>
+                      {content}
+                    </li>
+                  </ul>
+              ))}
+
 
               <section className="space-y-4 mt-6">
                 <h2 className="text-2xl text-[#1D2026] inter font-semibold">
                   Description
                 </h2>
                 <p className="text-[#333333] text-[12px] md:text-base inter leading-relaxed">
-                  {programData.content || fallbackData.content}
+                  {programData.description}
                 </p>
               </section>
             </div>
