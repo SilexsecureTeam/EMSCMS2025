@@ -111,38 +111,10 @@ const Login = () => {
             {/* Error Message */}
             {loginError && <p className="text-red-500 text-sm mt-1 text-center">{loginError}</p>}
 
-            {/* Signup Link */}
-            <div className="text-start pl-7 text-[18px] text-black mt-4">
-              Don't have a PHC account?{' '}
-              <a href="/register" className="text-[#2C473A] font-semibold hover:underline">
-                Sign up
-              </a>
-            </div>
+           
 
-            {/* Social Login */}
-            <div className="flex flex-col gap-3 items-center justify-center mt-4 space-x-5 py-10">
-              <p>Or sign in with your work email</p>
-              <div className="flex gap-x-5">
-                {/* ...social icons... */}
-              </div>
-            </div>
+           
           </form>
-
-          <p className="text-[16px] font-normal text-[#3C3939] text-center mt-6">
-            This site is protected by reCAPTCHA and the Google{' '}
-            <a href="#" className="underline">
-              Privacy Policy
-            </a>
-            <br />
-            and{' '}
-            <a href="#" className="underline">
-              Terms of Service
-            </a>{' '}
-            |{' '}
-            <a href="#" className="underline">
-              Contact us
-            </a>
-          </p>
         </div>
       </div>
     </div>

@@ -129,7 +129,7 @@ const Otp = () => {
               disabled={timer !== 0}
               className="text-[#323233] md:text-[20px] text-sm font-normal"
             >
-              Didn’t get a code ? <span className="text-[#2C473A]"><a href="#">Resend</a></span>
+           
             </button>
           </div>
           <button
@@ -142,7 +142,7 @@ const Otp = () => {
             Create account
           </button>
         </form>
-        <p className="text-[16px] font-normal text-[#3C3939] text-center mt-6">
+        {/* <p className="text-[16px] font-normal text-[#3C3939] text-center mt-6">
           This site is protected by reCAPTCHA and the Google{' '}
           <a href="#" className="underline">
             Privacy Policy
@@ -156,7 +156,7 @@ const Otp = () => {
           <a href="#" className="underline">
             Contact us
           </a>
-        </p>
+        </p> */}
       </div>
     </div>
   );
