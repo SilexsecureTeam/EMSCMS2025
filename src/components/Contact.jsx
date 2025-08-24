@@ -35,6 +35,7 @@ const Contact = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -46,6 +47,8 @@ const Contact = () => {
       message: "",
     },
   });
+
+  const selectedSubject = watch("subject");
 
   const subjects = [
     { id: "general", label: "General Inquiry" },
@@ -235,7 +238,7 @@ const Contact = () => {
                   />
                   <span
                     className={`w-3 h-3 mr-2 rounded-full border ${
-                      s.id === register("subject").value
+                      selectedSubject === s.id
                         ? "border-[#19392c] bg-[#19392c]"
                         : "border-gray-400"
                     }`}

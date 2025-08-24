@@ -41,7 +41,7 @@ const Footer2 = memo(({ data }) => {
             />
           )}
           <p className="mb-5 max-w-[320px] font-normal text-[14px] text-[#333333]">
-            {description || "The Etiquette and Management School (EMS) is a premier institution dedicated to providing individuals with exceptional training..."}
+            {description}
           </p>
           <div className="flex space-x-4">
             <a href="https://www.instagram.com/EMS_Abuja" target="_blank" rel="noopener noreferrer">
@@ -87,7 +87,7 @@ const Footer2 = memo(({ data }) => {
         </div>
       </div>
       <h2 className="text-center pt-5 pb-4 font-normal bg-[#19392c] text-white w-full">
-        {greenDescription || "© The Etiquette and Management School. || 2025 All Rights Reserved."}
+        {greenDescription }
       </h2>
     </div>
   );

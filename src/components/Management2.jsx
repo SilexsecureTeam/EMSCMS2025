@@ -117,7 +117,7 @@ const Management2 = memo(() => {
                           : 'group-hover:bg-white group-hover:text-black text-white'
                       }`}
                     >
-                      <p className="text-sm md:text-[15px] font-normal leading-relaxed mb-4 max-w-[280px] line-clamp-4">
+                      <p className="text-sm md:text-[15px] font-normal leading-relaxed mb-4  line-clamp-4">
                         {program.paragraph}
                       </p>
                       <div className="flex items-center justify-start w-full">

@@ -3,10 +3,12 @@ import { Download } from "lucide-react";
 import Skeleton from "@mui/material/Skeleton";
 
 const Aabout = memo(({ data }) => {
-  const { title2, content2, image2, title3, content3, image3 } = data || {};
-  
+  const { title2, content2, image2, title3, content3, image3, image1 } = data || {};
+
+  const [image1Loaded, setImage1Loaded] = useState(false);
   const [image2Loaded, setImage2Loaded] = useState(false);
   const [image3Loaded, setImage3Loaded] = useState(false);
+  const [image1Src, setImage1Src] = useState(null);
   const [image2Src, setImage2Src] = useState(null);
   const [image3Src, setImage3Src] = useState(null);
 
@@ -36,6 +38,19 @@ const Aabout = memo(({ data }) => {
     }
   }, [image3]);
 
+  useEffect(() => {
+    if (image1) {
+      setImage1Src(image1);
+      const img = new Image();
+      img.src = image1;
+      img.onload = () => setImage1Loaded(true);
+      img.onerror = () => setImage1Loaded(false);
+    } else {
+      setImage1Loaded(false);
+      setImage1Src(null);
+    }
+  }, [image1]);
+
   return (
     <div className="bg-white w-full pb-8 h-fit px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row justify-between py-5 md:py-10 w-full lg:gap-20 md:12">
@@ -51,11 +66,11 @@ const Aabout = memo(({ data }) => {
           </div>
         </div>
        <div className="w-full md:w-1/2 mb-4 lg:mb-0">
-          {!image2Loaded || !image2Src ? (
+          {!image1Loaded || !image1Src ? (
             <Skeleton variant="rectangular" width="100%" height={400} />
           ) : (
             <img
-              src={image2Src}
+              src={image1Src}
               alt={title2 || "Mission Image"}
               className="w-full h-82 object-cover object-top"
               loading="lazy"

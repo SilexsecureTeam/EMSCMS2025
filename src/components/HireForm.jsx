@@ -17,14 +17,14 @@ const HireForm = () => {
     email: yup.string().email("Invalid email format").required("Email is required"),
     phone: yup.string().required("Phone Number is required").matches(/^\d+$/, "Phone number must contain only digits"),
     staff_category: yup.string().required("Staff Category is required"),
-    years_of_experience: yup.number()
-      .typeError("Experience must be a number")
-      .required("Years of Experience is required")
-      .min(0, "Experience cannot be negative"),
+    // years_of_experience: yup.number()
+    //   .typeError("Experience must be a number")
+    //   .required("Years of Experience is required")
+    //   .min(0, "Experience cannot be negative"),
     address: yup.string().required("Address is required"),
     city: yup.string().required("City is required"),
     country: yup.string().required("Country is required"),
-    zip_code: yup.string().required("Zip Code is required"),
+    zip_code: yup.string(),
     interest_reason: yup.string().nullable(),
   });
 
@@ -41,7 +41,7 @@ const HireForm = () => {
       email: "",
       phone: "",
       staff_category: "",
-      years_of_experience: "",
+      // years_of_experience: "",
       address: "",
       city: "",
       country: "",
@@ -184,7 +184,7 @@ const HireForm = () => {
             )}
           </div>
 
-          <div>
+          {/* <div>
             <label
               htmlFor="years_of_experience"
               className="block text-sm font-medium text-gray-700"
@@ -203,7 +203,7 @@ const HireForm = () => {
             {errors.years_of_experience && (
               <p className="mt-1 text-sm text-red-600">{errors.years_of_experience.message}</p>
             )}
-          </div>
+          </div> */}
 
           <div>
             <label
@@ -296,7 +296,7 @@ const HireForm = () => {
             htmlFor="interest_reason"
             className="block text-sm font-medium text-gray-700"
           >
-            Why are you interested in this role?
+            Tell us more or describe your needs
           </label>
           <textarea
             id="interest_reason"
@@ -304,7 +304,7 @@ const HireForm = () => {
             {...register("interest_reason")}
             rows="4"
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#19392c] focus:border-[#19392c] sm:text-sm"
-            placeholder="Write a few sentences about your motivation..."
+            placeholder="Write a few sentences about your needs..."
           ></textarea>
         </div>
 

@@ -1,7 +1,6 @@
 import { MapPin, Phone, Mail } from "lucide-react";
 import React, { memo } from "react";
 
-// Accept the 'email' prop from the parent component
 const Contact2 = memo(({ email }) => {
   return (
     <div className="bg-[#c5ac8e] lg:px-15 md:px-10 px-5 py-6">
@@ -25,7 +24,7 @@ const Contact2 = memo(({ email }) => {
           <div>
             <p className="text-sm text-gray-800">Email</p>
             <p className="font-semibold text-gray-800">
-              {email }
+              {email || "info@etiquettemanagementschool.com"}
             </p>
           </div>
         </div>

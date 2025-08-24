@@ -3,6 +3,7 @@ import { Edit2, Eye, CornerDownRightIcon, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import PageManagement from "../../hooks/management";
 import { toast } from "react-hot-toast";
+import EditPageModal from "./EditPageModal"; // Make sure this file exists
 
 const PageList = () => {
   const { getPages } = PageManagement();
@@ -10,7 +11,8 @@ const PageList = () => {
   const [loading, setLoading] = useState(false);
   const [parentPage, setParentPage] = useState("");
   const [currentQuery, setCurrentQuery] = useState("");
-  const [selectedPage, setSelectedPage] = useState(null); 
+  const [selectedPage, setSelectedPage] = useState(null);
+  const [editPage, setEditPage] = useState(null);
 
   // Fetch pages based on search query
   const fetchPages = async (query) => {
@@ -23,7 +25,6 @@ const PageList = () => {
     setLoading(true);
     try {
       const response = await getPages(query.trim());
-      console.log(response)
       const pageData = Array.isArray(response)
         ? response
         : response.data && Array.isArray(response.data)
@@ -56,6 +57,16 @@ const PageList = () => {
   // Close modal
   const closeModal = () => {
     setSelectedPage(null);
+  };
+
+  // Open edit modal
+  const openEditModal = (page) => {
+    setEditPage(page);
+  };
+
+  // Close edit modal
+  const closeEditModal = () => {
+    setEditPage(null);
   };
 
   return (
@@ -156,13 +167,13 @@ const PageList = () => {
                         <Eye size={16} />
                         <span>View</span>
                       </button>
-                      {/* <Link
-                        to={`/dashboard/pages/edit/${page.id || index}`}
+                      <button
+                        onClick={() => openEditModal(page)}
                         className="flex items-center gap-2 text-green-600 hover:text-green-800"
                       >
                         <Edit2 size={16} />
                         <span>Edit</span>
-                      </Link> */}
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -295,6 +306,18 @@ const PageList = () => {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Edit Modal */}
+      {editPage && (
+        <EditPageModal
+          page={editPage}
+          onClose={closeEditModal}
+          onSuccess={() => {
+            closeEditModal();
+            fetchPages(currentQuery);
+          }}
+        />
       )}
     </div>
   );
