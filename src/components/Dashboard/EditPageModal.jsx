@@ -289,9 +289,23 @@ const EditPageModal = ({ page, onClose, onSuccess }) => {
           </div>
           <div>
             <label className="block font-light text-[18px]">Header Description</label>
+            <div className="border rounded bg-[#2C473A] text-white flex items-center p-1 gap-1">
+              <select className="border rounded p-1 text-sm bg-white text-black">
+                <option>Normal</option>
+                <option>Heading 1</option>
+                <option>Heading 2</option>
+              </select>
+              <button className="p-1 hover:bg-gray-100 rounded font-bold">B</button>
+              <button className="p-1 hover:bg-gray-100 rounded italic">I</button>
+              <button className="p-1 hover:bg-gray-100 rounded underline">U</button>
+              <button className="p-1 hover:bg-gray-100 rounded">S</button>
+              <button className="p-1 hover:bg-gray-100 rounded">"</button>
+              <div className="h-5 w-px bg-gray-300 mx-1"></div>
+              {/* Add more toolbar buttons as needed */}
+            </div>
             <textarea
               {...register("header_description")}
-              className="w-full border p-2 rounded h-24 resize-none"
+              className="w-full border p-2 rounded h-32 resize-none"
             />
             {errors.header_description && (
               <p className="text-red-500 text-sm">{errors.header_description.message}</p>
@@ -308,10 +322,27 @@ const EditPageModal = ({ page, onClose, onSuccess }) => {
                 className="w-full border-b p-2 text-lg font-medium outline-none"
               />
               <label className="block font-light text-[18px] mt-2">Content {idx + 1}</label>
+              <div className="border rounded bg-[#2C473A] text-white flex items-center p-1 gap-1">
+                <select className="border rounded p-1 text-sm bg-white text-black">
+                  <option>Normal</option>
+                  <option>Heading 1</option>
+                  <option>Heading 2</option>
+                </select>
+                <button className="p-1 hover:bg-gray-100 rounded font-bold">B</button>
+                <button className="p-1 hover:bg-gray-100 rounded italic">I</button>
+                <button className="p-1 hover:bg-gray-100 rounded underline">U</button>
+                <button className="p-1 hover:bg-gray-100 rounded">S</button>
+                <button className="p-1 hover:bg-gray-100 rounded">"</button>
+                <div className="h-5 w-px bg-gray-300 mx-1"></div>
+                {/* Add more toolbar buttons as needed */}
+              </div>
               <textarea
                 {...register(`content_${idx + 1}`)}
-                className="w-full border p-2 rounded h-24 resize-none"
+                className="w-full border p-2 rounded h-32 resize-none"
               />
+              {errors[`content_${idx + 1}`] && (
+                <p className="text-red-500 text-sm">{errors[`content_${idx + 1}`].message}</p>
+              )}
               <label className="block font-light text-[18px] mt-4">Content Image {idx + 1}</label>
               <div className="flex items-center gap-2">
                 <input

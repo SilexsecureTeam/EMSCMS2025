@@ -12,13 +12,12 @@ import Contact2 from "../components/Contact2";
 import Footer2 from "../components/Footer2";
 import PageManagement from "../hooks/management";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner"; // Import your loader
 
 const Home2 = () => {
-
   const { getPages } = PageManagement();
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     const fetchHomePage = async () => {
@@ -49,9 +48,8 @@ const Home2 = () => {
     fetchHomePage();
   }, []);
 
-
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (!pageData) {
@@ -61,10 +59,10 @@ const Home2 = () => {
   return (
     <div className="bg-gray-100 mx-auto max-w-[1500px] home-2">
       <Header2 />
-      <div className="lg:px-15 md:px-10 px-5">
+      <div className="lg:px-14 md:px-10 px-8">
         <Hero2 sliders={pageData.sliders} header={pageData.header_title} description={pageData.header_description} />
       </div>
-     <Misson2 data={{ title: pageData.title_2, content: pageData.content_2, image: pageData.content_2_image }} />
+      <Misson2 data={{ title: pageData.title_2, content: pageData.content_2, image: pageData.content_2_image }} />
       <Management2 />
       <Program2 data={{ title: pageData.title_3, content: pageData.content_3, image: pageData.content_3_image }} />
       <Student2 data={{ title: pageData.title_4, content: pageData.content_4, image: pageData.content_4_image }} />
@@ -72,7 +70,7 @@ const Home2 = () => {
       <Follow2 />
       <Review />
       <Contact2 email={pageData.footer_contact} />
-      <Footer2 data={{description: pageData.footer_description, greenTitle: pageData.footer_green_title ,greenDescription: pageData.footer_green_description}}  />
+      <Footer2 data={{ description: pageData.footer_description, greenTitle: pageData.footer_green_title, greenDescription: pageData.footer_green_description }} />
     </div>
   );
 };

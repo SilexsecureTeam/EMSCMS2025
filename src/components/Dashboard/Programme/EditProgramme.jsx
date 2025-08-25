@@ -6,6 +6,24 @@ import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import PageManagement from "../../../hooks/management";
 
+// Editor Toolbar Component
+const EditorToolbar = () => (
+  <div className="border rounded bg-[#2C473A] text-white flex items-center p-1 gap-1 mb-2">
+    <select className="border rounded p-1 text-sm bg-white text-black">
+      <option>Normal</option>
+      <option>Heading 1</option>
+      <option>Heading 2</option>
+    </select>
+    <button className="p-1 hover:bg-gray-100 rounded font-bold">B</button>
+    <button className="p-1 hover:bg-gray-100 rounded italic">I</button>
+    <button className="p-1 hover:bg-gray-100 rounded underline">U</button>
+    <button className="p-1 hover:bg-gray-100 rounded">S</button>
+    <button className="p-1 hover:bg-gray-100 rounded">"</button>
+    <div className="h-5 w-px bg-gray-300 mx-1"></div>
+    {/* Add more toolbar buttons as needed */}
+  </div>
+);
+
 // 1. Updated Schema to match AddProgramPage
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
@@ -231,11 +249,12 @@ const EditProgramPage = () => {
           {errors.content && <p className="text-red-500 text-xs">{errors.content.message}</p>}
         </div>
 
-        {/* Description */}
+        {/* Description with Editor */}
         <div>
           <label htmlFor="description" className="block font-medium mb-1">
             Description
           </label>
+          <EditorToolbar />
           <textarea
             id="description"
             {...register("description")}
@@ -312,11 +331,12 @@ const EditProgramPage = () => {
           {errors.curriculum && <p className="text-red-500 text-xs">{errors.curriculum.message}</p>}
         </div>
 
-        {/* Target Audience */}
+        {/* Target Audience with Editor */}
         <div>
           <label htmlFor="target_audience" className="block font-medium mb-1">
             Target Audience
           </label>
+          <EditorToolbar />
           <textarea
             id="target_audience"
             {...register("target_audience")}

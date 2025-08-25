@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast';
 const MonitorContent = () => {
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null); // Changed to store ID
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [currentImage, setCurrentImage] = useState(null);
   const { createBlogs, getAllBlogs, deleteBlogs, updateBlogs, getBlogById } = PageManagement();
   const [categories, setCategories] = useState([]);
@@ -21,7 +21,13 @@ const MonitorContent = () => {
     content: yup.string().required('Content is required'),
     status: yup.string().oneOf(['draft', 'published'], 'Invalid status').required('Status is required'),
     top_stories: yup.boolean(),
-    image: yup.mixed().nullable(),
+    image: yup
+      .mixed()
+      .nullable()
+      .test('fileSize', 'Image must be less than 2MB', value => {
+        if (!value || value.length === 0) return true;
+        return value[0].size <= 2 * 1024 * 1024;
+      }),
   });
 
   const {
@@ -46,14 +52,11 @@ const MonitorContent = () => {
 
   const handleEditClick = async (slug) => {
     try {
-      console.log('Fetching blog with slug:', slug); 
       const blog = await getBlogById(slug);
       if (!blog) {
         toast.error('Blog not found');
         return;
       }
-
-      // Pre-fill form fields
       setValue('title', blog.title || '');
       setValue('content', blog.content || '');
       setValue('status', blog.status || 'draft');
@@ -62,45 +65,39 @@ const MonitorContent = () => {
       setSelectedCategoryId(blog.id);
       setShowEditCategoryModal(true);
     } catch (error) {
-      console.error('Error fetching blog:', error.response?.data);
       toast.error(error.response?.data?.message || 'Failed to load blog details');
     }
   };
 
-const editCategory = async (data) => {
-  const formData  = new FormData();
-  formData.append('title', data.title);
-  formData.append('content', data.content);
-  formData.append('status', data.status);
-  formData.append('top_stories', data.top_stories ? 1 : 0);
-  if (data.image && data.image.length > 0) {
-    formData.append('image', data.image[0]);
-  }
-formData.append("_method","PATCH");
-  try {
-    console.log('Updating blog with ID:', selectedCategoryId);
-
-    await toast.promise(
-      updateBlogs(selectedCategoryId, formData),
-      {
-        pending: 'Updating post...',
-        success: 'Post updated successfully',
-        error: (error) => error.response?.data?.message || 'Failed to update post',
-      }
-    );
-
-    const updated = await getAllBlogs();
-    setCategories(updated || []);
-    reset();
-    setShowEditCategoryModal(false);
-    setSelectedCategoryId(null);
-    setCurrentImage(null);
-  } catch (error) {
-    console.error('Error updating post:', error.response?.data);
-    toast.error(error.response?.data?.message || 'Failed to update post');
-  }
-};
-
+  const editCategory = async (data) => {
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('content', data.content);
+    formData.append('status', data.status);
+    formData.append('top_stories', data.top_stories ? 1 : 0);
+    if (data.image && data.image.length > 0) {
+      formData.append('image', data.image[0]);
+    }
+    formData.append("_method", "PATCH");
+    try {
+      await toast.promise(
+        updateBlogs(selectedCategoryId, formData),
+        {
+          pending: 'Updating post...',
+          success: 'Post updated successfully',
+          error: (error) => error.response?.data?.message || 'Failed to update post',
+        }
+      );
+      const updated = await getAllBlogs();
+      setCategories(updated || []);
+      reset();
+      setShowEditCategoryModal(false);
+      setSelectedCategoryId(null);
+      setCurrentImage(null);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update post');
+    }
+  };
 
   const deleteCategory = async (id) => {
     try {
@@ -121,10 +118,8 @@ formData.append("_method","PATCH");
       setLoading(true);
       try {
         const data = await getAllBlogs();
-        console.log(data)
         setCategories(data || []);
       } catch (error) {
-        console.error('Error fetching categories:', error);
         toast.error('Failed to load blogs');
       } finally {
         setLoading(false);
@@ -155,9 +150,27 @@ formData.append("_method","PATCH");
       reset();
       setShowAddCategoryModal(false);
     } catch (error) {
-      console.error('Error creating post:', error);
+      toast.error(error.response?.data?.message || 'Failed to create post');
     }
   };
+
+  // Editor toolbar JSX
+  const EditorToolbar = () => (
+    <div className="border rounded bg-[#2C473A] text-white flex items-center p-1 gap-1 mb-2">
+      <select className="border rounded p-1 text-sm bg-white text-black">
+        <option>Normal</option>
+        <option>Heading 1</option>
+        <option>Heading 2</option>
+      </select>
+      <button className="p-1 hover:bg-gray-100 rounded font-bold">B</button>
+      <button className="p-1 hover:bg-gray-100 rounded italic">I</button>
+      <button className="p-1 hover:bg-gray-100 rounded underline">U</button>
+      <button className="p-1 hover:bg-gray-100 rounded">S</button>
+      <button className="p-1 hover:bg-gray-100 rounded">"</button>
+      <div className="h-5 w-px bg-gray-300 mx-1"></div>
+      {/* Add more toolbar buttons as needed */}
+    </div>
+  );
 
   return (
     <div className="px-4 py-6 sm:px-8">
@@ -257,8 +270,6 @@ formData.append("_method","PATCH");
                 />
                 {errors.title && <p className="text-red-500 text-sm mb-2">{errors.title.message}</p>}
 
-               
-
                 <label className="text-sm font-medium pb-1 text-[#060a18b9] block">Image</label>
                 <input
                   type="file"
@@ -268,9 +279,10 @@ formData.append("_method","PATCH");
                 />
 
                 <label className="text-sm font-medium pb-1 text-[#060a18b9] block">Content*</label>
+                <EditorToolbar />
                 <textarea
                   placeholder="Write your content here..."
-                  className="w-full border rounded px-3 py-2 mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#2C473A]"
+                  className="w-full border p-2 rounded h-32 resize-none mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#2C473A]"
                   rows="5"
                   {...register('content')}
                 />
@@ -343,7 +355,6 @@ formData.append("_method","PATCH");
                 />
                 {errors.title && <p className="text-red-500 text-sm mb-2">{errors.title.message}</p>}
 
-
                 <label className="text-sm font-medium pb-1 text-[#060a18b9] block">Current Image</label>
                 <div className="mb-4">
                   {currentImage ? (
@@ -367,9 +378,10 @@ formData.append("_method","PATCH");
                 />
 
                 <label className="text-sm font-medium pb-1 text-[#060a18b9] block">Content*</label>
+                <EditorToolbar />
                 <textarea
                   placeholder="Write your content here..."
-                  className="w-full border rounded px-3 py-2 mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#2C473A]"
+                  className="w-full border p-2 rounded h-32 resize-none mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#2C473A]"
                   rows="5"
                   {...register('content')}
                 />

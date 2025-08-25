@@ -62,7 +62,7 @@ const Header2 = memo(() => {
   );
 
   return (
-    <div className="flex items-center home-2 lg:px-15 md:px-10 px-5 justify-between bg-white w-full h-[100px] ">
+    <div className="flex items-center home-2 lg:px-14 md:px-10 px-5 justify-between bg-white w-full h-[100px] ">
       {!logoLoaded ? (
         <Skeleton variant="rectangular" width={250} height={48} />
       ) : (
