@@ -26,7 +26,7 @@ const Header2 = memo(() => {
       try {
         const response = await getPrograms();
         if (response) {
-          setPrograms(response);
+          setPrograms(response || []);
         }
       } catch (error) {
         console.error("Failed to fetch programs:", error);

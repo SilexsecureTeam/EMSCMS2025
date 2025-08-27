@@ -1,53 +1,41 @@
-import React, { useState } from "react";
-import { Edit2, Eye, CornerDownRightIcon, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Edit2, Eye, CornerDownRightIcon, X, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import PageManagement from "../../hooks/management";
 import { toast } from "react-hot-toast";
-import EditPageModal from "./EditPageModal"; // Make sure this file exists
+import EditPageModal from "./EditPageModal"; 
 
 const PageList = () => {
-  const { getPages } = PageManagement();
+  const { getAllPages, deletePage } = PageManagement();
   const [pages, setPages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [parentPage, setParentPage] = useState("");
-  const [currentQuery, setCurrentQuery] = useState("");
   const [selectedPage, setSelectedPage] = useState(null);
   const [editPage, setEditPage] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ open: false, page: null });
 
-  // Fetch pages based on search query
-  const fetchPages = async (query) => {
-    if (!query.trim()) {
-      toast.error("Enter a parent page name");
-      setPages([]);
-      setCurrentQuery("");
-      return;
-    }
-    setLoading(true);
-    try {
-      const response = await getPages(query.trim());
-      const pageData = Array.isArray(response)
-        ? response
-        : response.data && Array.isArray(response.data)
-        ? response.data
-        : response.data
-        ? [response.data]
-        : [];
-      setPages(pageData);
-      setCurrentQuery(query.trim());
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to load pages");
-      setPages([]);
-      setCurrentQuery(query.trim());
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle search form submission
-  const handleSearch = (e) => {
-    e.preventDefault();
-    fetchPages(parentPage);
-  };
+  // Fetch all pages on mount
+  useEffect(() => {
+    const fetchAllPages = async () => {
+      setLoading(true);
+      try {
+        const response = await getAllPages();
+        const pageData = Array.isArray(response)
+          ? response
+          : response.data && Array.isArray(response.data)
+          ? response.data
+          : response.data
+          ? [response.data]
+          : [];
+        setPages(pageData);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to load pages");
+        setPages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllPages();
+  }, []);
 
   // Open modal with page details
   const openModal = (page) => {
@@ -69,27 +57,59 @@ const PageList = () => {
     setEditPage(null);
   };
 
+  // Refresh pages after edit/delete
+  const refreshPages = async () => {
+    setLoading(true);
+    try {
+      const response = await getAllPages();
+      const pageData = Array.isArray(response)
+        ? response
+        : response.data && Array.isArray(response.data)
+        ? response.data
+        : response.data
+        ? [response.data]
+        : [];
+      setPages(pageData);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to load pages");
+      setPages([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Open delete modal
+  const openDeleteModal = (page) => {
+    setDeleteModal({ open: true, page });
+  };
+
+  // Close delete modal
+  const closeDeleteModal = () => {
+    setDeleteModal({ open: false, page: null });
+  };
+
+  // Delete page handler (using parent_page as identifier)
+  const handleDeletePage = async () => {
+    const parentPage = deleteModal.page?.parent_page;
+    if (!parentPage) return;
+    setLoading(true);
+    try {
+      await deletePage(parentPage);
+      toast.success("Page deleted successfully");
+      closeDeleteModal();
+      refreshPages();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to delete page");
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-full bg-gray-100 pt-15 p-4 sm:p-6 lg:p-10">
       {/* Top Section */}
       <div className="flex flex-col p-6 bg-white rounded-lg sm:border-r-6 sm:border-r-[#C5AC8E] sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div className="w-12 h-12 rounded-full bg-[#C5AC8E] mx-auto sm:mx-0"></div>
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <form onSubmit={handleSearch} className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Enter parent page name (e.g., about, home, blog)"
-              value={parentPage}
-              onChange={(e) => setParentPage(e.target.value)}
-              className="w-full sm:w-64 border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2C473A]"
-            />
-            <button
-              type="submit"
-              className="bg-[#2C473A] text-white px-4 py-2 rounded text-sm hover:bg-green-600"
-            >
-              Search
-            </button>
-          </form>
           <Link
             to="/dashboard/pages/create"
             className="bg-[#C5AC8E] text-[15px] text-white cursor-pointer py-2 px-4 rounded-lg w-full sm:w-auto text-center"
@@ -98,13 +118,6 @@ const PageList = () => {
           </Link>
         </div>
       </div>
-
-      {/* Show which page is being viewed */}
-      {currentQuery && (
-        <h2 className="mb-2 font-semibold text-lg">
-          Showing results for: <span className="text-[#2C473A]">{currentQuery}</span>
-        </h2>
-      )}
 
       {/* Table Section */}
       <div className="flex mt-15 mb-1 w-full">
@@ -119,7 +132,7 @@ const PageList = () => {
               <th className="p-3 font-light sm:p-4 whitespace-nowrap"></th>
               <th className="p-3 font-light sm:p-4 whitespace-nowrap">Parent Page</th>
               <th className="p-3 font-light sm:p-4 whitespace-nowrap">Header Title</th>
-              <th className="p-3 font-light sm:p-4 whitespace-nowrap">Author</th>
+             
               <th className="p-3 font-light sm:p-4 whitespace-nowrap">Published Date</th>
               <th className="p-3 font-light sm:p-4 whitespace-nowrap">Actions</th>
             </tr>
@@ -145,9 +158,7 @@ const PageList = () => {
                   <td className="p-3 border-gray-100 border-y-7 text-[#2B2D42] font-light sm:p-4 whitespace-nowrap">
                     {page.header_title || "Untitled"}
                   </td>
-                  <td className="p-3 border-gray-100 border-y-7 text-[#2B2D42] font-light sm:p-4 whitespace-nowrap">
-                    {page.author || "Unknown"}
-                  </td>
+                  
                   <td className="p-3 border-gray-100 border-y-7 text-[#2B2D42] font-light sm:p-4 whitespace-nowrap w-[200px]">
                     {page.created_at
                       ? new Date(page.created_at).toLocaleDateString("en-CA") +
@@ -174,6 +185,13 @@ const PageList = () => {
                         <Edit2 size={16} />
                         <span>Edit</span>
                       </button>
+                      <button
+                        onClick={() => openDeleteModal(page)}
+                        className="flex items-center gap-2 text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 size={16} />
+                        <span>Delete</span>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -182,6 +200,39 @@ const PageList = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.open && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-[#2B2D42]">Delete Page</h3>
+              <button onClick={closeDeleteModal} className="text-[#060a18b9] hover:text-[#060a18]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="mb-6 text-gray-700">
+              Are you sure you want to delete <span className="font-bold">{deleteModal.page?.header_title || deleteModal.page?.parent_page}</span>?
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={handleDeletePage}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 w-full"
+                disabled={loading}
+              >
+                {loading ? "Deleting..." : "Yes, Delete"}
+              </button>
+              <button
+                onClick={closeDeleteModal}
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 w-full"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal for Detailed View */}
       {selectedPage && (
@@ -315,7 +366,7 @@ const PageList = () => {
           onClose={closeEditModal}
           onSuccess={() => {
             closeEditModal();
-            fetchPages(currentQuery);
+            refreshPages();
           }}
         />
       )}

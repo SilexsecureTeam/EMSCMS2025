@@ -9,44 +9,24 @@ import {
   Rocket,
   HeartHandshake,
 } from "lucide-react";
+import PageManagement from "../hooks/management";
 
-const defaultValues = [
-  {
-    title: "Excellence",
-    icon: <ShieldCheck className="text-[#193728]" size={24} />,
-    description: "We uphold the highest standards in training, ensuring every student achieves mastery in luxury etiquette and hospitality.",
-  },
-  {
-    title: "Trust",
-    icon: <Handshake className="text-[#193728]" size={24} />,
-    description: "We foster trust and authenticity in all our interactions, promoting honesty and professionalism.",
-  },
-  {
-    title: "Respect",
-    icon: <Landmark className="text-[#193728]" size={24} />,
-    description: "We celebrate cultural diversity and individuality, encouraging understanding and inclusivity.",
-  },
-  {
-    title: "Empowerment",
-    icon: <TrendingUp className="text-[#193728]" size={24} />,
-    description: "We inspire confidence and growth, equipping individuals with the skills to thrive in luxury environments.",
-  },
-  {
-    title: "Innovation",
-    icon: <Rocket className="text-[#193728]" size={24} />,
-    description: "We embrace modern techniques and insights to deliver forward-thinking, impactful training.",
-  },
-  {
-    title: "Service",
-    icon: <HeartHandshake className="text-[#193728]" size={24} />,
-    description: "We are dedicated to cultivating a spirit of care and attentiveness, creating exceptional experiences for all.",
-  },
-];
+// Map icon string from API to Lucide component
+const iconMap = {
+  ShieldCheck: <ShieldCheck className="text-[#193728]" size={24} />,
+  Handshake: <Handshake className="text-[#193728]" size={24} />,
+  Landmark: <Landmark className="text-[#193728]" size={24} />,
+  TrendingUp: <TrendingUp className="text-[#193728]" size={24} />,
+  Rocket: <Rocket className="text-[#193728]" size={24} />,
+  HeartHandshake: <HeartHandshake className="text-[#193728]" size={24} />,
+};
 
 const OurValues = memo(({ data }) => {
   const { title4, content4, image4 } = data || {};
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
+  const [values, setValues] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (image4) {
@@ -61,6 +41,27 @@ const OurValues = memo(({ data }) => {
     }
   }, [image4]);
 
+  useEffect(() => {
+    const fetchValues = async () => {
+      setLoading(true);
+      try {
+        const { getValues } = PageManagement();
+        const response = await getValues();
+        const valueList = Array.isArray(response)
+          ? response
+          : response?.data && Array.isArray(response.data)
+            ? response.data
+            : [];
+        setValues(valueList);
+      } catch (error) {
+        setValues([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchValues();
+  }, []);
+
   return (
     <section className="pb-10 px-4 sm:px-6 lg:px-8">
       <div className="w-full">
@@ -72,26 +73,34 @@ const OurValues = memo(({ data }) => {
 
         {/* Grid layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {defaultValues.map((value, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-md p-6 space-y-3 h-full"
-            >
-              <div className="flex items-start space-x-4">
-                <div className="bg-[#8C62394D] p-1.5 rounded-full">
-                  {value.icon}
-                </div>
-                <div>
-                  <h3 className="text-[15px] mb-3 poppins font-bold text-[#333333]">
-                    {value.title}
-                  </h3>
-                  <p className="text-sm font-light leading-7 poppins text-[#333333]">
-                    {value.description}
-                  </p>
+          {loading ? (
+            Array.from({ length: 6 }).map((_, idx) => (
+              <Skeleton key={idx} variant="rectangular" height={120} />
+            ))
+          ) : values.length === 0 ? (
+            <div className="col-span-3 text-center text-gray-500"></div>
+          ) : (
+            values.map((value, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-md p-6 space-y-3 h-full"
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="bg-[#8C62394D] p-1.5 rounded-full">
+                    {iconMap[value.icon] || <ShieldCheck className="text-[#193728]" size={24} />}
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] mb-3 poppins font-bold text-[#333333]">
+                      {value.title}
+                    </h3>
+                    <p className="text-sm font-light leading-7 poppins text-[#333333]">
+                      {value.content}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
       <div className="flex flex-col md:flex-row justify-between py-10 md:pt-15 w-full lg:gap-20 md:12">

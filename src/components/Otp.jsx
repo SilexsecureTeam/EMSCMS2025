@@ -139,7 +139,7 @@ const Otp = () => {
               otp.length === 4 ? 'bg-[#2C473A]' : 'bg-gray-400 cursor-not-allowed'
             }`}
           >
-            Create account
+            Login
           </button>
         </form>
         {/* <p className="text-[16px] font-normal text-[#3C3939] text-center mt-6">

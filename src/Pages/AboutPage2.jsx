@@ -6,6 +6,7 @@ import OurValues from "../components/OurValues";
 import Contact2 from "../components/Contact2";
 import Footer2 from "../components/Footer2";
 import PageManagement from "../hooks/management";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const AboutPage2 = () => {
   const [loading, setLoading] = useState(true);
@@ -36,7 +37,7 @@ const AboutPage2 = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner/>;
   }
 
   if (!pageData) {

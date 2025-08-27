@@ -7,12 +7,12 @@ import face from "../assets/facebook.svg";
 import insta from "../assets/instagram.svg";
 import twi from "../assets/twitter.svg";
 import lin from "../assets/linkedin.svg";
+import CreateReviewUser from "./Dashboard/Review/CreateUserReview";
 
-// Accept the 'data' prop from the parent component
 const Footer2 = memo(({ data }) => {
-  // Destructure the props with a fallback to avoid errors
   const { description, greenTitle, greenDescription } = data || {};
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   useEffect(() => {
     const img = new Image();
@@ -84,8 +84,34 @@ const Footer2 = memo(({ data }) => {
           <button className="bg-[#19392c] px-3 py-1.5 font-normal cursor-pointer">
             SUBSCRIBE NOW
           </button>
+             <div className="pt-5">
+          <button
+            className="bg-[#19392c] text-white px-4 py-2 rounded mb-4"
+            onClick={() => setShowReviewModal(true)}
+          >
+            Leave a review
+          </button>
         </div>
+        </div>
+     
       </div>
+      {/* Modal for CreateReviewUser */}
+      {showReviewModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-auto">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Submit Review</h3>
+              <button
+                onClick={() => setShowReviewModal(false)}
+                className="text-gray-500 hover:text-gray-800"
+              >
+                <span className="text-xl">&times;</span>
+              </button>
+            </div>
+            <CreateReviewUser onSuccess={() => setShowReviewModal(false)} />
+          </div>
+        </div>
+      )}
       <h2 className="text-center pt-5 pb-4 font-normal bg-[#19392c] text-white w-full">
         {greenDescription }
       </h2>

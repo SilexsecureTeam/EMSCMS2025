@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { axiosAuth } from '../utils/axios';
+import { axiosAuth, axiosClient } from '../utils/axios';
 import { useNavigate } from 'react-router-dom';
 
 const PageManagement = () => {
@@ -10,7 +10,7 @@ const PageManagement = () => {
   const getPrograms = async () => {
     try {
       setLoading(true);
-      const res = await axiosAuth.get("/programs");
+      const res = await axiosClient.get("/programs");
       console.log('Programs:', res);
       return res.data
     } catch (error) {
@@ -470,6 +470,38 @@ const PageManagement = () => {
     }
   };
 
+  const getAllPages = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosAuth.get(`/pages`);
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Pages");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const deletePage = async (parent_page) => {
+    try {
+      const res = await axiosAuth.delete(`/page/${parent_page}`)
+      if (res.status == 200) {
+        return Promise.resolve("Page Deleted Successfully")
+      }
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Pages");
+    } finally {
+      setLoading(false);
+    }
+
+  }
+
   const getAllHires = async () => {
     try {
       setLoading(true);
@@ -515,8 +547,8 @@ const PageManagement = () => {
     }
   }
 
-  const deleteStaff = async (id) =>{
-     try {
+  const deleteStaff = async (id) => {
+    try {
       setLoading(true);
       await axiosAuth.delete(`/staff-hires/${id}`);
       return Promise.resolve("Programme deleted successfully");
@@ -530,7 +562,224 @@ const PageManagement = () => {
     }
   }
 
+  const getAllUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosAuth.get(`/users`);
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Users");
+    } finally {
+      setLoading(false);
+    }
+  }
 
+  const UpdateUserDetail = async (id, data) => {
+    try {
+      const res = await axiosAuth.patch(`users/${id}`, data)
+      return Promise.resolve("User update successfully")
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Users");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const createReview = async (data) => {
+    try {
+      setLoading(true);
+     const res= await axiosAuth.post('/program-reviews', data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(res)
+      return Promise.resolve("review created successfully");
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error creating review");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const getReviews = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosAuth.get('/program-reviews');
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Reviews");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const deleteReview = async (id) => {
+    try {
+      setLoading(true)
+      const res = await axiosAuth.delete(`/program-reviews/${id}`)
+      return Promise.resolve("Review successfully deleted")
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Reviews");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const updateReview = async (id,data) => {
+    try {
+      setLoading(true)
+      await axiosAuth.patch(`/reviews/${id}/featured`,data)
+      return Promise.resolve("Review status updated successfully")
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching Reviews");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const createValues = async (data) => {
+    try {
+      setLoading(true);
+      const res = await axiosAuth.post('/values', data);
+      return Promise.resolve("Values created successfully");
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error creating values");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const getValues = async ()=>{
+    try{
+      setLoading(true);
+      const res = await axiosAuth.get('/values');
+      return Promise.resolve(res.data);
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching values");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const deleteValues = async (id) => {
+    try {
+      setLoading(true);
+      await axiosAuth.delete(`/values/${id}`);
+      return Promise.resolve("Values deleted successfully");
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error deleting values");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const getValueById = async (id) => {
+    try {
+      setLoading(true);
+      const res = await axiosAuth.get(`/values/${id}`);
+      return Promise.resolve(res.data);
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching value");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const updateValue = async (id, data) => {
+    try {
+      setLoading(true);
+      await axiosAuth.patch(`/values/${id}`, data);
+      return Promise.resolve("Value updated successfully");
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error updating value");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const createStudentPageBlock = async (data) => {
+  try {
+      setLoading(true);
+      const res = await axiosAuth.post('/page-block', data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      return Promise.resolve("Student block created successfully");
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error creating block page");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const deleteStudentPageBlock = async ()=>{
+ try {
+      setLoading(true);
+      await axiosAuth.delete(`/page-block`);
+      return Promise.resolve("Pageblock successfully");
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error deleting pageblock");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const getPageBlock = async ()=>{
+     try{
+      setLoading(true);
+      const res = await axiosAuth.get('/page-block');
+      return Promise.resolve(res.data);
+    } catch (error) {
+      console.error(error);
+      const resError = error.response?.data;
+      const errorMessage = resError?.message || resError?.data;
+      return Promise.reject(errorMessage || "Error fetching page block");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return {
     getPrograms,
@@ -562,6 +811,22 @@ const PageManagement = () => {
     getHireById,
     createStaff,
     deleteStaff,
+    getAllPages,
+    deletePage,
+    getAllUsers,
+    UpdateUserDetail,
+    createReview,
+    getReviews,
+    deleteReview,
+    updateReview,
+    createValues,
+    getValues,
+    deleteValues,
+    getValueById,
+    updateValue,
+    getPageBlock,
+    deleteStudentPageBlock,
+    createStudentPageBlock
   }
 
 }

@@ -7,7 +7,7 @@ import MonitorContent from './MonitorContent';
 import AnalyticsContent from './AnalyticsContent';
 import MessagesContent from './MessagesContent';
 import SettingsContent from './SettingsContent';
-import EditPage from './CreatePage';
+// import EditPage from './CreatePage';
 import { Navigate } from 'react-router-dom';
 import AddProgramPage from '../../Pages/AddProgram';
 import Programme from "./Programme/Programme"
@@ -20,6 +20,10 @@ import EnrolNow from './EnrolNow/EnrolNow';
 import ContactPage from './Contact/Contact';
 import CreatePage from './CreatePage';
 import StaffManagement from './Staff';
+import UserDetails from "./Users/user"
+import ViewReview from "./Review/ViewReview"
+import ValuesPage from './Values/values';
+import PageBlock from './PageBlock';
 const MainContent = () => {
   return (
     <main className="flex-1 bg-gray-100 overflow-auto">
@@ -43,6 +47,10 @@ const MainContent = () => {
         <Route path="contact" element={<ContactPage/>} />
         <Route path="enrol-now" element={<EnrolNow />} />
         <Route path="staff" element={<StaffManagement />} />
+        <Route path="user-details" element={<UserDetails />} />
+        <Route path="reviews" element={<ViewReview />} />
+        <Route path="values" element={<ValuesPage />} />
+        <Route path="pageblock" element={<PageBlock />} />
         <Route path="*" element={<div>Error: Page Not Found</div>} />
       </Routes>
     </main>

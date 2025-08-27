@@ -26,7 +26,7 @@ const Program2 = memo(({ data }) => {
     <div className="lg:px-15 md:px-10 px-5 home-2 py-10">
       <div className="bg-[#c5ac8e] p-15 md:px-9 px-4 rounded-sm py-10">
         <div className="flex flex-col text-center gap-2 md:text-start md:flex-row md:justify-between justify-center item-center ">
-          <h1 className="font-bold md:max-w-[600px] w-full text-2xl md:text-[35px] capitalize">
+          <h1 className="font-bold md:max-w-[600px] w-full text-2xl md:text-[35px] capitalize" style={{lineHeight: 1.2}}>
             {title }
           </h1>
           <div className="md:max-w-[389px] w-full flex flex-col justify-center">

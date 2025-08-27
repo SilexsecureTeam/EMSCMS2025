@@ -27,7 +27,6 @@ const Management2 = memo(() => {
           paragraph: program.description || 'No description available',
           img: program.image ? `${import.meta.env.VITE_IMAGE_URL}${program.image}` : null,
         }))
-        .slice(0, 6); 
       setPrograms(mappedPrograms);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load programs');

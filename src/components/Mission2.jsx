@@ -15,7 +15,7 @@ const Misson2 = memo(({ data }) => {
       const img = new Image();
       img.src = image;
       img.onload = () => setImageLoaded(true);
-      img.onerror = () => setImageLoaded(false); 
+      img.onerror = () => setImageLoaded(false);
     } else {
       setImageLoaded(false);
       setImageSrc(null);
@@ -41,16 +41,18 @@ const Misson2 = memo(({ data }) => {
 
         <div className="w-full flex justify-center lg:w-1/2 ">
           <div className=" ">
-            <h2 className="text-xl md:text-[35px] max-w-[450px] poppins md:leading-11 font-semibold text-[#333333] mb-4">
-              {title }
-            </h2>
-           <div className="mb-7 text-[17px] font-light poppins max-w-[418px] text-[#333333]">
-  {content && content.split('\n').map((paragraph, index) => (
-    <p key={index} className="mb-4">
-      {paragraph}
-    </p>
-  ))}
-</div>
+         <h2
+  className="text-xl md:text-[35px] max-w-[450px] poppins font-semibold text-[#333333] mb-4"
+  style={{ lineHeight: 1.2 }}
+>  {title}
+</h2>
+            <div className="mb-7 text-[17px] font-light poppins max-w-[418px] text-[#333333]">
+              {content && content.split('\n').map((paragraph, index) => (
+                <p key={index} className="mb-4">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
             <div className="flex gap-x-2 items-center justify-center md:justify-start">
               <NavLink to="/programs">
                 <button className="mt-1 bg-[#19392c] font-semibold md:text-[21px] text-[12px] px-3 py-1.5 cursor-pointer text-white">

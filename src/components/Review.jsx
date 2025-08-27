@@ -1,62 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PageManagement from "../hooks/management";
 import st1 from "../assets/st1.jpg";
-// import st2 from "../assets/st2.jpg";
-import st3 from "../assets/st3.jpg";
-import st4 from "../assets/st4.jpg";
-import st5 from "../assets/st5.jpg";
-import st6 from "../assets/st6.jpg";
-import st7 from "../assets/st7.jpg";
-
-const reviews = [
-  {
-    id: 1,
-    name: "PRAISE APEH",
-    title: "",
-    rating: 4.8,
-    avatar: st6,
-    text: "As a student, my experience at the Etiquette and Management School has been truly enriching. Their knowledgeable and patient instructors make formal topics relatable, boosting confidence in communication and presentation. I highly recommend the school to any student looking to develop proper etiquette and professional skills in a respectful, encouraging atmosphere.",
-  },
-  {
-    id: 2,
-    name: "JOY AWO",
-    title: "",
-    rating: 4.7,
-    avatar: st4,
-    text: "My experience as a trainee at the school has been enriching and eye-opening. The training sessions are well-structured, practical, and professionally delivered. I’ve gained valuable knowledge on service excellence, etiquette, and personal presentation.",
-  },
-  {
-    id: 3,
-    name: "EMMANUEL ATESHE",
-    title: "",
-    rating: 5,
-    avatar: st3,
-    text: "My experience at EMS so far has been nothing short of excellent. The school is set up like a typical household, a neat and well-organised environment, as well as the genuine care and attention provided to students is carried along during lessons. I’m really happy to be part of it.",
-  },
-  {
-    id: 4,
-    name: "TIZA AONDOUNGWA",
-    title: "",
-    rating: 4.9,
-    avatar: st7,
-    text: "As a current EMS Trainee, I'm thrilled with the superb program quality, supportive peers, and ideal learning environment. Knowledgeable, passionate instructors break down complex etiquette into actionable steps, boosting my confidence through invaluable practical application and feedback.",
-  },
-  {
-    id: 5,
-    name: "ABDULLAHI SADIQ",
-    title: "",
-    rating: 4.6,
-    avatar: st1,
-    text: "My time at EMS has been very educational. The quiet, peaceful, and homely environment is perfect for learning. The welcoming, patient staff and instructors ensure we're carried along, encouraging questions. I'm truly pleased with the experience.",
-  },
-  {
-    id: 6,
-    name: "MERIEM",
-    title: "",
-    rating: 5,
-    avatar: st5,
-    text: "My experience taught me effective communication, understanding others, respecting employers, and cooperative teamwork for household services. I also learned about confidentiality and gained new friends and colleagues.",
-  },
-];
 
 const REVIEWS_PER_SLIDE_LG = 2;
 const REVIEWS_PER_SLIDE_SM = 1;
@@ -69,16 +13,42 @@ const getSlides = (perSlide, reviews) => {
   return slides;
 };
 
-const Review = ({ reviews: propReviews }) => {
+const Review = () => {
+  const { getReviews } = PageManagement();
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [slide, setSlide] = useState(0);
   const [perSlide, setPerSlide] = useState(
     window.innerWidth >= 1024 ? REVIEWS_PER_SLIDE_LG : REVIEWS_PER_SLIDE_SM
   );
+  const IMG_URL = import.meta.env.VITE_IMAGE_URL;
 
-  // Use props if provided, otherwise fallback to default data
-  const finalReviews = propReviews || reviews;
+  // Fetch reviews from API
+  const fetchReviews = async () => {
+    try {
+      setLoading(true);
+      const response = await getReviews();
+      const reviewList = Array.isArray(response)
+        ? response
+        : response?.data && Array.isArray(response.data)
+          ? response.data
+          : [];
+      // Filter only featured reviews
+      const featuredReviews = reviewList.filter(r => r.featured);
+      setReviews(featuredReviews);
+    } catch (error) {
+      console.error("Failed to load reviews:", error);
+      setReviews([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const slides = getSlides(perSlide, finalReviews);
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const slides = getSlides(perSlide, reviews);
 
   useEffect(() => {
     const handleResize = () => {
@@ -92,12 +62,29 @@ const Review = ({ reviews: propReviews }) => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSlide((prevSlide) => (prevSlide + 1) % slides.length);
-    }, 4000);
+    if (slides.length > 0) {
+      const interval = setInterval(() => {
+        setSlide((prevSlide) => (prevSlide + 1) % slides.length);
+      }, 4000);
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    }
   }, [slides.length]);
+
+  if (loading) {
+    return (
+      <div className="lg:px-15 md:px-10 px-5 home-2 pb-20">
+        <h2 className="font-semibold md:text-[35px] text-2xl text-center text-[#333333] mb-5">
+          Students Reviews
+        </h2>
+        <div className="bg-white p-8 shadow">
+          <div className="flex justify-center items-center h-40">
+            <div className="text-lg">Loading reviews...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="lg:px-15 md:px-10 px-5 home-2 pb-20">
@@ -127,30 +114,39 @@ const Review = ({ reviews: propReviews }) => {
                   >
                     <div className="flex items-center mb-3">
                       <img
-                        src={review.avatar}
-                        alt={review.name}
-                        className="w-12 h-12 rounded-full mr-3"
+                        src={
+                          review.image
+                            ? review.image.startsWith("http")
+                              ? review.image
+                              : `${IMG_URL}${review.image}`
+                            : st1
+                        }
+                        alt={review.reviewer_name}
+                        className="w-12 h-12 rounded-full mr-3 object-cover"
                         loading="lazy"
                         decoding="async"
+                        onError={(e) => {
+                          e.target.src = st1; // fallback image on error
+                        }}
                       />
                       <div className="w-full">
                         <div className="font-semibold md:text-2xl text-base inter">
-                          {review.name}
+                          {review.reviewer_name}
                         </div>
                         <div className="flex w-full justify-between items-center">
                           <div className="md:text-xl text-sm font-normal text-[#1C1C1C99] inter">
-                            {review.title}
+                            {review.title || ""}
                           </div>
                           <div className="flex mt-1">
                             {[...Array(5)].map((_, i) => (
-                              <Star key={i} filled={i < review.rating} />
+                              <Star key={i} filled={i < Math.floor(review.rating)} />
                             ))}
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="text-[#1C1C1C] md:text-base text-xs inter font-normal">
-                      {review.text}
+                      {review.review}
                     </div>
                   </div>
                 ))}
@@ -159,21 +155,23 @@ const Review = ({ reviews: propReviews }) => {
           </div>
         </div>
         {/* Dots */}
-        <div className="flex justify-center mt-6 space-x-2">
-          {slides.map((_, idx) => (
-            <button
-              key={idx}
-              className={`w-3 h-3 rounded-full cursor-pointer border-2 transition-colors
-                ${
-                  slide === idx
-                    ? "bg-[#193728] border-[#193728]"
-                    : "bg-gray-300 border-gray-300"
-                }`}
-              onClick={() => setSlide(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
-        </div>
+        {slides.length > 1 && (
+          <div className="flex justify-center mt-6 space-x-2">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                className={`w-3 h-3 rounded-full cursor-pointer border-2 transition-colors
+                  ${
+                    slide === idx
+                      ? "bg-[#193728] border-[#193728]"
+                      : "bg-gray-300 border-gray-300"
+                  }`}
+                onClick={() => setSlide(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

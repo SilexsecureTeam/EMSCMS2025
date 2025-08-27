@@ -65,7 +65,7 @@ const Home2 = () => {
       <Misson2 data={{ title: pageData.title_2, content: pageData.content_2, image: pageData.content_2_image }} />
       <Management2 />
       <Program2 data={{ title: pageData.title_3, content: pageData.content_3, image: pageData.content_3_image }} />
-      <Student2 data={{ title: pageData.title_4, content: pageData.content_4, image: pageData.content_4_image }} />
+      <Student2  />
       <New2 />
       <Follow2 />
       <Review />
