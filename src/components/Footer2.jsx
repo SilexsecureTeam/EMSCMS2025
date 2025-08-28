@@ -50,10 +50,10 @@ const Footer2 = memo(({ data }) => {
             <a href="https://x.com/EMS_Abuja" target="_blank" rel="noopener noreferrer">
               <img src={twi} alt="twitter" className="text-white w-[22px] h-[22px] cursor-pointer bg-[#19392c]" size={22} />
             </a>
-            <a href="https://www.facebook.com/yourpage" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.facebook.com/share/163L6LZhYo/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer">
               <img src={face} alt="facebook" className="text-white w-[22px] h-[22px] cursor-pointer bg-[#19392c]" size={22} />
             </a>
-            <a href="https://www.linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.linkedin.com/company/the-etiquette-and-management-school-limited/" target="_blank" rel="noopener noreferrer">
               <img src={lin} alt="linkedin" className="text-white w-[22px] h-[22px] cursor-pointer bg-[#19392c]" size={22} />
             </a>
           </div>
@@ -113,7 +113,7 @@ const Footer2 = memo(({ data }) => {
         </div>
       )}
       <h2 className="text-center pt-5 pb-4 font-normal bg-[#19392c] text-white w-full">
-        {greenDescription }
+        {greenDescription || `© ${new Date().getFullYear()} The Etiquette and Management School. All rights reserved.`}
       </h2>
     </div>
   );

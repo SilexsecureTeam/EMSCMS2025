@@ -151,8 +151,10 @@ const Header2 = memo(() => {
           <NavLink to="https://x.com/EMS_Abuja">
             <img src={twi} alt="twitter" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
           </NavLink>
-          <img src={face} alt="facebook" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
-          <img src={lin} alt="linkedin" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
+          <a href="https://www.facebook.com/share/163L6LZhYo/?mibextid=wwXlfr"> <img src={face} alt="facebook" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" /></a>
+         <a href="https://www.linkedin.com/company/the-etiquette-and-management-school-limited/">
+           <img src={lin} alt="linkedin" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
+         </a>
         </div>
         <NavLink to="/enroll">
           <button className="hidden md:block bg-[#19392c] text-sm font-semibold cursor-pointer text-white px-2 py-1.5">
