@@ -27,6 +27,9 @@ const OurValues = memo(({ data }) => {
   const [imageSrc, setImageSrc] = useState(null);
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Move this to component level
+  const { getValues } = PageManagement();
 
   useEffect(() => {
     if (image4) {
@@ -45,20 +48,36 @@ const OurValues = memo(({ data }) => {
     const fetchValues = async () => {
       setLoading(true);
       try {
-        const { getValues } = PageManagement();
+        // Check if getValues exists
+        if (!getValues) {
+          console.error('getValues function not found in PageManagement');
+          setValues([]);
+          return;
+        }
+        
         const response = await getValues();
-        const valueList = Array.isArray(response)
-          ? response
-          : response?.data && Array.isArray(response.data)
-            ? response.data
-            : [];
+        console.log(response, "values response");
+        
+        // Handle different response structures
+        let valueList = [];
+        if (Array.isArray(response)) {
+          valueList = response;
+        } else if (response?.data) {
+          valueList = Array.isArray(response.data) ? response.data : [response.data];
+        } else if (response) {
+          valueList = [response];
+        }
+        
+        console.log("Processed values:", valueList);
         setValues(valueList);
       } catch (error) {
+        console.error("Failed to fetch values:", error);
         setValues([]);
       } finally {
         setLoading(false);
       }
     };
+    
     fetchValues();
   }, []);
 
@@ -71,6 +90,7 @@ const OurValues = memo(({ data }) => {
           Our Values
         </h2>
 
+       
         {/* Grid layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
@@ -78,23 +98,25 @@ const OurValues = memo(({ data }) => {
               <Skeleton key={idx} variant="rectangular" height={120} />
             ))
           ) : values.length === 0 ? (
-            <div className="col-span-3 text-center text-gray-500"></div>
+            <div className="col-span-full text-center text-gray-500 py-8">
+              No values found
+            </div>
           ) : (
             values.map((value, index) => (
               <div
-                key={index}
-                className="bg-white rounded-md p-6 space-y-3 h-full"
+                key={value.id || index}
+                className="bg-white rounded-md p-6 space-y-3 h-full border shadow-sm"
               >
                 <div className="flex items-start space-x-4">
-                  <div className="bg-[#8C62394D] p-1.5 rounded-full">
+                  <div className="bg-[#8C62394D] p-1.5 rounded-full flex-shrink-0">
                     {iconMap[value.icon] || <ShieldCheck className="text-[#193728]" size={24} />}
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-[15px] mb-3 poppins font-bold text-[#333333]">
-                      {value.title}
+                      {value.title || 'No Title'}
                     </h3>
                     <p className="text-sm font-light leading-7 poppins text-[#333333]">
-                      {value.content}
+                      {value.content || 'No Content'}
                     </p>
                   </div>
                 </div>
@@ -103,6 +125,7 @@ const OurValues = memo(({ data }) => {
           )}
         </div>
       </div>
+      
       <div className="flex flex-col md:flex-row justify-between py-10 md:pt-15 w-full lg:gap-20 md:12">
         <div className="w-full md:w-1/2 mb-4 lg:mb-0">
           {!imageLoaded || !imageSrc ? (
