@@ -145,12 +145,9 @@ const HeaderDashboard = () => {
               </div>
               <button
                 className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                onClick={() => {
-                  // Optionally navigate to profile page
-                  setIsProfileDropdownOpen(false);
-                }}
+                onClick={() => navigate('/register')}
               >
-                View Profile
+                Register
               </button>
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
