@@ -142,13 +142,13 @@ const Contact = () => {
               <SiX className="w-10 h-10 p-2" />
             </a>
             <a
-              href="#"
+              href="https://www.facebook.com/share/163L6LZhYo/?mibextid=wwXlfr"
               className="bg-[#D09B66] rounded-full text-[#333333] hover:bg-white cursor-pointer"
             >
               <FaFacebookF className="w-10 h-10 p-2" />
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/company/the-etiquette-and-management-school-limited/"
               className="bg-[#D09B66] rounded-full text-[#333333] hover:bg-white cursor-pointer"
             >
               <LinkedinIcon className="w-10 h-10 p-2" />

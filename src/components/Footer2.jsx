@@ -109,10 +109,10 @@ const Footer2 = memo(({ data }) => {
               </button>
             </div>
             <CreateReviewUser onSuccess={() => setShowReviewModal(false)} />
-          </div>
+        </div>
         </div>
       )}
-      <h2 className="text-center pt-5 pb-4 font-normal bg-[#19392c] text-white w-full">
+      <h2 className="text-center pt-5 pb-4 font-bold bg-[#19392c] text-white w-full">
         {greenDescription || `© ${new Date().getFullYear()} The Etiquette and Management School. All rights reserved.`}
       </h2>
     </div>

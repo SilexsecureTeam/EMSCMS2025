@@ -118,6 +118,26 @@ const getSlides = (perSlide) => {
 
 const IMG_URL = import.meta.env.VITE_IMAGE_URL;
 
+// Slug to description mapping
+const slugDescriptions = {
+  "house-keeper-training-course":
+    "Become a confident, skilled, and trusted housekeeper with our professional training. This course equips participants with international housekeeping standards, adapted for Nigerian homes and high-net worth households, ensuring excellence in household management.",
+  "nanny-training-course":
+    "Enroll in our Nanny Training Course to gain practical childcare skills, safety training, and professional standards. Tailored for high net worth homes and diverse families in Nigeria, this program prepares nannies to provide trusted care, education, and household support.",
+  "cultural-competence-and-awareness-training-course":
+    "Build cultural competence with EMS's specialized training course. Learn strategies to engage respectfully across diverse backgrounds, enhance inclusivity and strengthen professional and social relationships in today's globalized world.",
+  "silver-service-training-course":
+    "Master the art of formal dining with EMS's Silver Service Training Course. Gain hands-on skills in tablesetting, food & drink service, and guest etiquette for luxury homes, shortlets, and formal events. Perfect for stewards, housekeepers, chefs, and aspiring butlers.",
+  "steward-training-course":
+    "Train as a professional steward with EMS. Learn world-class skills in personal assistance, wardrobe care, and household etiquette. This course builds confidence, competence, and cultural sensitivity to deliver seamless service in high-end homes with distinction and discretion.",
+  "butler-training-course":
+    "Master the art of modern butlering with EMS's Butler Training Course. Gain expert skills in fine dining and beverage service. Designed for aspiring and professional butlers serving elite households, luxury homes, and formal environments in Nigeria and beyond.",
+  "house-manager-training-course":
+    "Develop the skills of a professional House Manager with EMS. Learn household administration, staff coordination, budgeting, and emergency response. This course equips participants to manage private residences with confidence, leadership, and world-class standards for high net worth homes.",
+  "luxury-bed-making-and-turn-down-services-training-course":
+    "Master the art of luxury bed making and turndown services with EMS. This course teaches professional techniques to transform rooms into havens of comfort, elevating guest experience in high-end homes, hotels, and luxury shortlets.",
+};
+
 const DynamicProgramPage = () => {
   const { slug } = useParams();
   const [heroLoaded, setHeroLoaded] = useState(false);
@@ -149,7 +169,7 @@ const DynamicProgramPage = () => {
     } else {
       setHeroLoaded(true); // No image, so skip loading state
     }
-  }, []);
+  }, [programData?.image]);
 
   // Fetch program data by slug
   useEffect(() => {
@@ -157,10 +177,8 @@ const DynamicProgramPage = () => {
       try {
         setLoading(true);
         const response = await getProgramById(slug);
-        console.log("Fetched program:", response);
-        const program = response?.data; // Access the 'data' field from response
+        const program = response?.data;
         if (program) {
-          // Normalize array fields
           setProgramData({
             ...program,
             learning_outcomes: normalizeArrayField(program.learning_outcomes),
@@ -175,7 +193,6 @@ const DynamicProgramPage = () => {
           setProgramData(null);
         }
       } catch (error) {
-        console.error("Error fetching program:", error);
         setProgramData(null);
       } finally {
         setLoading(false);
@@ -204,7 +221,7 @@ const DynamicProgramPage = () => {
       setPerSlide(
         window.innerWidth >= 1024 ? REVIEWS_PER_SLIDE_LG : REVIEWS_PER_SLIDE_SM
       );
-      setSlide(0); // Reset to first slide when layout changes
+      setSlide(0);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -212,7 +229,6 @@ const DynamicProgramPage = () => {
 
   const slides = getSlides(perSlide);
 
-  // Auto slide every 4 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setSlide((prevSlide) =>
@@ -248,38 +264,24 @@ const DynamicProgramPage = () => {
     );
   }
 
-  // Fallback data
   const fallbackData = {
     title: "",
     content: ".",
     description: "",
-    learning_outcomes: [
-      "",
-    ],
+    learning_outcomes: [""],
     course_fee: "",
     target_audience: "",
-    entry_requirement: [
-      "",
-    ],
-
-    curriculum: [
-      "",
-    ],
-    course_content: [
-      "",
-    ],
-    learning_experience: [
-      "",
-    ],
+    entry_requirement: [""],
+    curriculum: [""],
+    course_content: [""],
+    learning_experience: [""],
     reviews: [],
   };
 
-  // Process target_audience (convert string to array if needed)
   const targetAudienceArray = programData.target_audience
     ? programData.target_audience.split(",").map((item) => item.trim())
     : fallbackData.target_audience.split(",").map((item) => item.trim());
 
-  // Use API reviews if available, otherwise fallback to hardcoded reviews
   const displayReviews = programData.reviews.length > 0 ? programData.reviews : reviews;
 
   return (
@@ -327,19 +329,18 @@ const DynamicProgramPage = () => {
             {/* Main Content */}
             <div className="flex-1 space-y-6 lg:w-1/2">
               <h1 className="text-2xl text-[#1D2026] font-semibold">
-                {programData.title || fallbackData.title}
+                {programData.title + "| The Etiquette and Mangement School" || fallbackData.title}
               </h1>
-              {(programData.content && Array.isArray(programData.content)
-                ? programData.content
-                : []
-              ).map((content, index) => (
-                <ul key={index} className="text-[#333333] font-normal text-base md:text-lg">
-                    <li>
-                      {content}
-                    </li>
-                  </ul>
-              ))}
-
+              <p className="text-[#333333] text-base md:text-lg font-medium mb-2">
+                {slugDescriptions[slug] || ""}
+              </p>
+              {Array.isArray(programData.content) && programData.content.length > 0 && (
+                <ul className="list-disc list-inside text-[#333333] font-normal text-base md:text-lg space-y-2 mt-2">
+                  {programData.content.map((content, index) => (
+                    <li key={index}>{content}</li>
+                  ))}
+                </ul>
+              )}
 
               <section className="space-y-4 mt-6">
                 <h2 className="text-2xl text-[#1D2026] inter font-semibold">
@@ -350,7 +351,6 @@ const DynamicProgramPage = () => {
                 </p>
               </section>
             </div>
-
             {/* Sidebar */}
             <div className="lg:w-1/2 flex justify-center inter md:justify-end">
               <aside className="mt-12 lg:mt-0 lg:w-80 bg-[#c5ac8e] inter h-fit text-white p-6 rounded-lg">

@@ -141,8 +141,9 @@ const Gallery = () => {
                 <h2 className="text-2xl md:text-[35px] text-[#19392c] poppins font-bold">
                   Our Gallery
                 </h2>
-                <p className="mt-2 text-[#19392c] font-medium text-sm md:text-base">
-                  Explore our collection of images
+                <p className="mt-2 text-[#19392c] font-medium text-sm md:text-base max-w-2xl mx-auto whitespace-pre-line break-words">
+                  Explore our gallery showcasing world-class etiquette and hospitality training at EMS.
+                  See how we shape confidence, cultural appreciation, and service excellence through transformative learning experiences.
                 </p>
               </div>
 
