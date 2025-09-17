@@ -81,10 +81,14 @@ const Header2 = memo(() => {
       <div className="md:flex hidden items-center gap-x-1.5 text-[#333333] justify-between font-semibold ">
         <div className="flex items-center space-x-3.5">
           <NavLink to="/">
-            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">Home</h4>
+            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">
+              Home
+            </h4>
           </NavLink>
           <NavLink to="/about">
-            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">About us</h4>
+            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">
+              About us
+            </h4>
           </NavLink>
 
           {/* Programmes Dropdown */}
@@ -96,7 +100,12 @@ const Header2 = memo(() => {
             >
               Programmes{" "}
               {!vectorLoaded ? (
-                <Skeleton variant="rectangular" width={16} height={16} className="pt-1 pl-1" />
+                <Skeleton
+                  variant="rectangular"
+                  width={16}
+                  height={16}
+                  className="pt-1 pl-1"
+                />
               ) : (
                 <img
                   src={vector}
@@ -128,16 +137,24 @@ const Header2 = memo(() => {
           </ul>
 
           <NavLink to="/gallery">
-            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">Gallery</h4>
+            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">
+              Gallery
+            </h4>
           </NavLink>
           <NavLink to="/blog">
-            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">Blog</h4>
+            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">
+              Blog
+            </h4>
           </NavLink>
           <NavLink to="/career">
-            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">Career</h4>
+            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">
+              Career
+            </h4>
           </NavLink>
           <NavLink to="/contact">
-            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">Contact Us</h4>
+            <h4 className="lg:text-[16px] text-[14px] font-semibold text-[#333333]">
+              Contact Us
+            </h4>
           </NavLink>
         </div>
       </div>
@@ -145,17 +162,55 @@ const Header2 = memo(() => {
       {/* Socials + Enroll */}
       <div className="hidden md:flex md:items-center space-x-1.5">
         <div className="flex items-center space-x-1.5">
-          <NavLink to="https://www.instagram.com/EMS_Abuja">
-            <img src={insta} alt="instagram" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
-          </NavLink>
-          <NavLink to="https://x.com/EMS_Abuja">
-            <img src={twi} alt="twitter" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
-          </NavLink>
-          <a href="https://www.facebook.com/share/163L6LZhYo/?mibextid=wwXlfr"> <img src={face} alt="facebook" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" /></a>
-         <a href="https://www.linkedin.com/company/the-etiquette-and-management-school-limited/">
-           <img src={lin} alt="linkedin" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
-         </a>
+          <a
+            href="https://www.instagram.com/EMS_Abuja"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src={insta}
+              alt="instagram"
+              className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]"
+            />
+          </a>
+
+          <a
+            href="https://x.com/EMS_Abuja"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src={twi}
+              alt="twitter"
+              className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]"
+            />
+          </a>
+
+          <a
+            href="https://www.facebook.com/share/163L6LZhYo/?mibextid=wwXlfr"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src={face}
+              alt="facebook"
+              className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]"
+            />
+          </a>
+
+          <a
+            href="https://www.linkedin.com/company/the-etiquette-and-management-school-limited/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src={lin}
+              alt="linkedin"
+              className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]"
+            />
+          </a>
         </div>
+
         <NavLink to="/enroll">
           <button className="hidden md:block bg-[#19392c] text-sm font-semibold cursor-pointer text-white px-2 py-1.5">
             Enroll Now
@@ -174,8 +229,12 @@ const Header2 = memo(() => {
       {isMobileMenuOpen && (
         <div className="absolute top-[100px] pb-6 left-0 w-full bg-white shadow-lg md:hidden z-50">
           <ul className="flex flex-col text-[#333333] font-semibold">
-            <NavLink to="/"><li className="px-4 py-2">Home</li></NavLink>
-            <NavLink to="/about"><li className="px-4 py-2">About Us</li></NavLink>
+            <NavLink to="/">
+              <li className="px-4 py-2">Home</li>
+            </NavLink>
+            <NavLink to="/about">
+              <li className="px-4 py-2">About Us</li>
+            </NavLink>
 
             {/* Mobile Programs */}
             <li>
@@ -185,7 +244,12 @@ const Header2 = memo(() => {
               >
                 Programmes{" "}
                 {!vectorLoaded ? (
-                  <Skeleton variant="rectangular" width={12} height={12} className="ml-2" />
+                  <Skeleton
+                    variant="rectangular"
+                    width={12}
+                    height={12}
+                    className="ml-2"
+                  />
                 ) : (
                   <img src={vector} alt="arrow" className="ml-2 w-3" />
                 )}
@@ -210,20 +274,67 @@ const Header2 = memo(() => {
               )}
             </li>
 
-            <NavLink to="/gallery"><li className="px-4 py-2">Gallery</li></NavLink>
-            <NavLink to="/blog"><li className="px-4 py-2">Blog</li></NavLink>
-            <NavLink to="/career"><li className="px-4 py-2">Career</li></NavLink>
-            <NavLink to="/contact"><li className="px-4 py-2">Contact Us</li></NavLink>
+            <NavLink to="/gallery">
+              <li className="px-4 py-2">Gallery</li>
+            </NavLink>
+            <NavLink to="/blog">
+              <li className="px-4 py-2">Blog</li>
+            </NavLink>
+            <NavLink to="/career">
+              <li className="px-4 py-2">Career</li>
+            </NavLink>
+            <NavLink to="/contact">
+              <li className="px-4 py-2">Contact Us</li>
+            </NavLink>
 
             <div className="flex justify-center w-full space-x-4 mt-3">
-              <NavLink to="https://www.instagram.com/EMS_Abuja">
-                <img src={insta} alt="instagram" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
-              </NavLink>
-              <NavLink to="https://x.com/EMS_Abuja">
-                <img src={twi} alt="twitter" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
-              </NavLink>
-              <img src={face} alt="facebook" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
-              <img src={lin} alt="linkedin" className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]" />
+              <a
+                href="https://www.instagram.com/EMS_Abuja"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={insta}
+                  alt="instagram"
+                  className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]"
+                />
+              </a>
+
+              <a
+                href="https://x.com/EMS_Abuja"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={twi}
+                  alt="twitter"
+                  className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]"
+                />
+              </a>
+
+              <a
+                href="https://www.facebook.com/share/163L6LZhYo/?mibextid=wwXlfr"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={face}
+                  alt="facebook"
+                  className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]"
+                />
+              </a>
+
+              <a
+                href="https://www.linkedin.com/company/the-etiquette-and-management-school-limited/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={lin}
+                  alt="linkedin"
+                  className="w-[22px] h-[22px] cursor-pointer bg-[#19392c]"
+                />
+              </a>
             </div>
 
             <NavLink to="/enroll">
