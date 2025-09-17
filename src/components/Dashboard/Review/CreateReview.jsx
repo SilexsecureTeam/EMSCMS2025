@@ -15,12 +15,7 @@ const schema = yup.object().shape({
     .min(1, "Minimum rating is 1")
     .max(5, "Maximum rating is 5")
     .required("Rating is required"),
-  image: yup
-    .mixed()
-    .test("fileSize", "Image must be less than 2MB", (value) => {
-      if (!value || !value[0]) return true; // ✅ allow empty if editing
-      return value[0].size <= 2 * 1024 * 1024;
-    }),
+
   featured: yup.boolean().required("Featured field is required"),
 });
 
@@ -46,7 +41,7 @@ const ReviewForm = ({
       review: "",
       rating: "",
       image: null,
-      featured: false,
+      featured: true,
     },
   });
 
@@ -131,7 +126,11 @@ const ReviewForm = ({
         <label className="block mb-1">Rating (1-5)</label>
         <input
           type="number"
-          {...register("rating")}
+          {...register("rating", {
+            setValueAs: (v) => (v === "" ? undefined : Number(v)),
+            min: { value: 1, message: "Minimum rating is 1" },
+            max: { value: 5, message: "Maximum rating is 5" },
+          })}
           min={1}
           max={5}
           className="w-full border px-3 py-2 rounded"
@@ -147,9 +146,20 @@ const ReviewForm = ({
           <label className="block mb-1">Image</label>
           <input
             type="file"
-            {...register("image")}
             accept="image/*"
             className="w-full border px-3 py-2 rounded"
+            {...register("image", {
+              validate: {
+                fileSize: (files) =>
+                  !files[0] ||
+                  files[0].size <= 2 * 1024 * 1024 ||
+                  "Image must be less than 2MB",
+                fileType: (files) =>
+                  !files[0] ||
+                  files[0].type.startsWith("image/") ||
+                  "Only image files are allowed",
+              },
+            })}
           />
           {errors.image && (
             <p className="text-red-500 text-sm">{errors.image.message}</p>
@@ -161,10 +171,7 @@ const ReviewForm = ({
       {(!isModal || currentUserRole !== "user") && (
         <div>
           <label className="block mb-1">Featured</label>
-          <select
-            {...register("featured")}
-            className="w-full border px-3 py-2 rounded"
-          >
+          <select {...register("featured", { setValueAs: (v) => v === true })}>
             <option value={false}>No</option>
             <option value={true}>Yes</option>
           </select>
