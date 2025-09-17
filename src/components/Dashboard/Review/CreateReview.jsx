@@ -171,7 +171,10 @@ const ReviewForm = ({
       {(!isModal || currentUserRole !== "user") && (
         <div>
           <label className="block mb-1">Featured</label>
-          <select {...register("featured", { setValueAs: (v) => v === true })}>
+          <select
+            className="w-full p-2"
+            {...register("featured", { setValueAs: (v) => v === true })}
+          >
             <option value={false}>No</option>
             <option value={true}>Yes</option>
           </select>
