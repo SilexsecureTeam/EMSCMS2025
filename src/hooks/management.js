@@ -643,7 +643,11 @@ const PageManagement = () => {
   const updateUserReview = async (id, data) => {
     try {
       setLoading(true);
-      await axiosAuth.patch(`/program-reviews/${id}`, data);
+      await axiosAuth.post(`/program-reviews/${id}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return Promise.resolve("Review updated successfully");
     } catch (error) {
       console.error(error);

@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-hot-toast";
 
-// Validation schema
+// ✅ Validation schema
 const schema = yup.object().shape({
   reviewer_name: yup.string().required("Reviewer name is required"),
   review: yup.string().required("Review is required"),
@@ -47,6 +47,9 @@ const ReviewForm = ({
     },
   });
 
+  // ✅ For image preview
+  const [previewImage, setPreviewImage] = useState(null);
+
   // ⬇️ Populate form when editing
   useEffect(() => {
     if (existingReview) {
@@ -54,9 +57,13 @@ const ReviewForm = ({
         reviewer_name: existingReview.reviewer_name || "",
         review: existingReview.review || "",
         rating: existingReview.rating || "",
-        image: null,
         featured: existingReview.featured ? "true" : "false",
       });
+      setPreviewImage(
+        existingReview?.image?.startsWith("http")
+          ? existingReview.image
+          : `${import.meta.env.VITE_IMAGE_URL}${existingReview.image}`
+      ); // backend should provide image URL
     }
   }, [existingReview, reset]);
 
@@ -85,12 +92,21 @@ const ReviewForm = ({
       }
 
       reset();
+      setPreviewImage(null);
+
       if (onClose) {
         fetchReviews();
         onClose();
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to submit review");
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
@@ -142,34 +158,42 @@ const ReviewForm = ({
         )}
       </div>
 
-      {/* Image (only on create) */}
-      {!existingReview && (
-        <div>
-          <label className="block mb-1">Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            className="w-full border px-3 py-2 rounded"
-            {...register("image", {
-              validate: {
-                fileSize: (files) =>
-                  !files[0] ||
-                  files[0].size <= 2 * 1024 * 1024 ||
-                  "Image must be less than 2MB",
-                fileType: (files) =>
-                  !files[0] ||
-                  files[0].type.startsWith("image/") ||
-                  "Only image files are allowed",
-              },
-            })}
-          />
-          {errors.image && (
-            <p className="text-red-500 text-sm">{errors.image.message}</p>
-          )}
-        </div>
-      )}
+      {/* Image upload + preview */}
+      <div>
+        <label className="block mb-1">Image</label>
+        <input
+          type="file"
+          accept="image/*"
+          className="w-full border px-3 py-2 rounded"
+          {...register("image", {
+            validate: {
+              fileSize: (files) =>
+                !files[0] ||
+                files[0].size <= 2 * 1024 * 1024 ||
+                "Image must be less than 2MB",
+              fileType: (files) =>
+                !files[0] ||
+                files[0].type.startsWith("image/") ||
+                "Only image files are allowed",
+            },
+          })}
+          onChange={handleImageChange}
+        />
+        {previewImage && (
+          <div className="mt-2">
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="w-32 h-32 object-cover rounded border"
+            />
+          </div>
+        )}
+        {errors.image && (
+          <p className="text-red-500 text-sm">{errors.image.message}</p>
+        )}
+      </div>
 
-      {/* Featured (not for normal users in modal) */}
+      {/* Featured */}
       {(!isModal || currentUserRole !== "user") && (
         <div>
           <label className="block mb-1">Featured</label>
@@ -177,14 +201,13 @@ const ReviewForm = ({
             <option value="false">No</option>
             <option value="true">Yes</option>
           </select>
-
           {errors.featured && (
             <p className="text-red-500 text-sm">{errors.featured.message}</p>
           )}
         </div>
       )}
 
-      {/* Submit button */}
+      {/* Submit */}
       <button
         type="submit"
         className="bg-[#2C473A] text-white px-4 py-2 rounded w-full mt-2 font-semibold hover:bg-[#1e3226]"
