@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-hot-toast";
 
-// ✅ Validation schema
+// Validation schema
 const schema = yup.object().shape({
   reviewer_name: yup.string().required("Reviewer name is required"),
   review: yup.string().required("Review is required"),
@@ -15,8 +15,10 @@ const schema = yup.object().shape({
     .min(1, "Minimum rating is 1")
     .max(5, "Maximum rating is 5")
     .required("Rating is required"),
-
-  featured: yup.boolean().required("Featured field is required"),
+  featured: yup
+    .string()
+    .oneOf(["true", "false"], "Featured must be Yes or No")
+    .required("Featured field is required"),
 });
 
 const ReviewForm = ({
@@ -52,8 +54,8 @@ const ReviewForm = ({
         reviewer_name: existingReview.reviewer_name || "",
         review: existingReview.review || "",
         rating: existingReview.rating || "",
-        image: null, // cannot pre-fill file input
-        featured: existingReview.featured ? true : false,
+        image: null,
+        featured: existingReview.featured ? "true" : "false",
       });
     }
   }, [existingReview, reset]);
@@ -70,7 +72,7 @@ const ReviewForm = ({
       }
 
       if (!isModal || currentUserRole !== "user") {
-        formData.append("featured", data.featured ? 1 : 0);
+        formData.append("featured", data.featured === "true" ? 1 : 0);
       }
 
       if (existingReview) {
@@ -171,13 +173,11 @@ const ReviewForm = ({
       {(!isModal || currentUserRole !== "user") && (
         <div>
           <label className="block mb-1">Featured</label>
-          <select
-            className="w-full p-2"
-            {...register("featured", { setValueAs: (v) => v === true })}
-          >
-            <option value={false}>No</option>
-            <option value={true}>Yes</option>
+          <select className="w-full p-2" {...register("featured")}>
+            <option value="false">No</option>
+            <option value="true">Yes</option>
           </select>
+
           {errors.featured && (
             <p className="text-red-500 text-sm">{errors.featured.message}</p>
           )}
